@@ -20,6 +20,8 @@ public class Board : MonoBehaviour
 
     public TMP_Text levelText;
     int levelValue = 0;
+
+    public int startRotation;
     
 
     public RectInt Bounds
@@ -70,6 +72,7 @@ public class Board : MonoBehaviour
 
     public void SpawnPiece()
     {
+        startRotation = 1;///Random.Range(0, 4);
         if(randomNextPiece == -1)
         {
             random = Random.Range(0, this.tetrominoes.Length);
@@ -79,21 +82,22 @@ public class Board : MonoBehaviour
         TetrominoData nextPiecedata= this.tetrominoes[randomNextPiece];
         //TetrominoData nextPieceData = this.tetrominoes[randomNextPiece];
         
-        Debug.Log("randomNextPiece: "+tetrominoes[randomNextPiece].tetromino);
+        //Debug.Log("randomNextPiece: "+tetrominoes[randomNextPiece].tetromino);
         
-        Debug.Log("randomPiece: "+tetrominoes[random].tetromino);
+        //Debug.Log("randomPiece: "+tetrominoes[random].tetromino);
         random=randomNextPiece;
         
-        activePiece.Initialize(this, spawnPosition, data);
+          activePiece.Initialize(this, spawnPosition, data);
         nextactivePiece.Initialize(this, this.spawnPositionOfNextPiece,  nextPiecedata);
         //this.activePiece.Initialize(this, this.spawnPosition,  data);
         //this.
-        if (IsValidPOsition(this.activePiece, this.spawnPosition))
+        if (IsValidPOsition(this.activePiece, activePiece.position))
         {
             Set(this.activePiece);
             SetNext(nextactivePiece);
         }
         else{
+            
             GameOver();
             EraseScore();
         }
@@ -132,10 +136,12 @@ public class Board : MonoBehaviour
             Vector3Int tilePosition = piece.cells[i]+position;
             if(this.tilemap.HasTile(tilePosition))
             {
+                Debug.Log("has tile");
                 return false;
             }
             if(!bounds.Contains((Vector2Int)tilePosition))
             {
+                Debug.Log("bounds not conain" + tilePosition);
                 return false;
             }
         }
@@ -209,7 +215,7 @@ public void SetNext(NextPiece piece)
         {
             Vector3Int tilePosition = piece.cells[i]+piece.position;
             this.tilemap.SetTile(tilePosition, piece.data.tile);
-            Debug.Log("Set Next Tile --- " + tilePosition);
+            //Debug.Log("Set Next Tile --- " + tilePosition);
         }
     }
 public void NextClear(NextPiece piece)
@@ -218,7 +224,7 @@ public void NextClear(NextPiece piece)
         {
             Vector3Int tilePosition = piece.cells[i]+piece.position;
             this.tilemap.SetTile(tilePosition, null);
-            Debug.Log("Clear Next Tile --- "+ tilePosition);
+            //Debug.Log("Clear Next Tile --- "+ tilePosition);
         }
     }
 
