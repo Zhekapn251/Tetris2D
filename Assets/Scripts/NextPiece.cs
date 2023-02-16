@@ -28,7 +28,6 @@ public class NextPiece : MonoBehaviour
         {            
             Rotate(1);
         }
-        
     }
     
     // Update is called once per frame

@@ -40,11 +40,10 @@ public class Piece : MonoBehaviour
             this.cells[i] = (Vector3Int)data.cells[i];
         }
         
-        for (int i=0; i<board.startRotation; i++)
+        for (int i=0; i<board.activePieceRotation; i++)
         {            
             Rotate(1);//board.startRotation
         }
-        
     }
     
     
@@ -67,6 +66,7 @@ public class Piece : MonoBehaviour
         {
             _coroutinesManager.StartAppearingCoroutine(Arrow.rotate);
             Rotate(+1);
+            
         }
 
         if(Input.GetKeyDown(KeyCode.LeftArrow))   ///move left

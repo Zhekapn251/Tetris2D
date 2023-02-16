@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class MenuButtonScript : MonoBehaviour
@@ -15,5 +16,10 @@ public class MenuButtonScript : MonoBehaviour
             menuCanvas.SetActive(true);
             
         }
+    }
+
+    public void Reload()
+    {
+        SceneManager.LoadScene(0);
     }
 }

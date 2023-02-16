@@ -1,13 +1,22 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TMPro;
+using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public class Board : MonoBehaviour
 {
+
+    public SaveGameManager SaveGameManager;
+    
     public Tilemap tilemap { get; private set; }
     public Piece activePiece { get; private set; }
     public NextPiece nextactivePiece { get; private set; }
     public TetrominoData[] tetrominoes;
+    public List<int> list = new List<int>();
+    
     public Vector2Int boardSize = new Vector2Int(10, 20);
     public Vector3Int spawnPosition = new Vector3Int(-3, 8, 0);
     public Vector3Int spawnPositionOfNextPiece = new Vector3Int(5, 7, 0);
@@ -15,59 +24,110 @@ public class Board : MonoBehaviour
     int random;
     public Tile testtile;
     public TMP_Text text;
-    //int score = 0;
-    SaveMyGame saveMyGame = new SaveMyGame();
+    public int score = 0;
+    //SaveMyGame saveMyGame = new SaveMyGame();
     public TMP_Text levelText;
-    public  string levelValue = "0";
+    public  int level = 0;
 
-    public int startRotation;
+    public int activePieceRotation;
     public int nextPieceStartRotation;
     
-    
-    
-
-    public RectInt Bounds
-    {
-        get
-        {
-           Vector2Int position = new Vector2Int(-this.boardSize.x/2-2,-this.boardSize.y/2);
-           return new RectInt(position, this.boardSize);
-        }
-    }
-
-
     private void Awake()
     {
-        
-        startRotation = UnityEngine.Random.Range(0, 4);
-        nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
+        SaveGameManager.SettingLoader();
         tilemap = GetComponentInChildren<Tilemap>();
-        this.activePiece = GetComponentInChildren<Piece>();
-        this.nextactivePiece = GetComponentInChildren<NextPiece>();
+        activePiece = GetComponentInChildren<Piece>();
+        nextactivePiece = GetComponentInChildren<NextPiece>();
         
-        
-        for (int i=0; i<this.tetrominoes.Length; i++)
+        for (int i=0; i<tetrominoes.Length; i++)
         {
-            this.tetrominoes[i].Initialize();
+            tetrominoes[i].Initialize();
         }
+        
+        if (SaveGameManager.isSaved())
+        {
+            StartGameRoutinesWithSaving();
+        }
+        else
+        {
+            StartGameRoutinesWithoutSaving();
+        }
+        
         Debug.Log("Awake() ---- OK");
     }
-    
     
     private void Start()
     {
         
-        saveMyGame.LoadGame();
-        PrintLevel(levelValue);
-        UpdateScore(saveMyGame.score);//UpdateScore(score);
-        SpawnPiece();
+        
         Debug.Log("Start() ---- OK");
-        
-        
+
+
     }
-
     
-
+    private void StartGameRoutinesWithSaving()
+    {
+        activePieceRotation = SaveGameManager.SaveDataStorage.activePieceRotation;
+        nextPieceStartRotation = SaveGameManager.SaveDataStorage.nextPieceRotation;
+        level = SaveGameManager.SaveDataStorage.level;
+        score = SaveGameManager.SaveDataStorage.score;
+            
+        activePiece.Initialize(this, new Vector3Int(SaveGameManager.SaveDataStorage.list[1],
+            SaveGameManager.SaveDataStorage.list[2],0), tetrominoes[SaveGameManager.SaveDataStorage.list[0]]);
+            
+        nextactivePiece.Initialize(this, new Vector3Int(SaveGameManager.SaveDataStorage.list[4],
+            SaveGameManager.SaveDataStorage.list[5],0), tetrominoes[SaveGameManager.SaveDataStorage.list[3]]);
+        randomNextPiece = SaveGameManager.SaveDataStorage.list[3];
+        random = randomNextPiece;
+            
+        Set(activePiece);
+        SetNext(nextactivePiece);
+        LoadTilesFromSaveSpot();
+        PrintLevel(level);
+        UpdateScore(score);
+    }
+    
+    private void StartGameRoutinesWithoutSaving()
+    {
+        activePieceRotation = UnityEngine.Random.Range(0, 4);
+        nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
+        SpawnPiece();
+    }
+    
+    public RectInt Bounds
+    {
+        get
+        {
+            Vector2Int position = new Vector2Int(-this.boardSize.x/2-2,-this.boardSize.y/2);
+            return new RectInt(position, this.boardSize);
+        }
+    }
+    
+    public void LoadTilesFromSaveSpot()
+    {
+        RectInt bounds = Bounds;
+        int itemInList = 0;
+        Tile savedTile;
+        int  row = bounds.yMin;
+        // Shift every row above down one
+        while (row < bounds.yMax)
+        {
+            for (int col = bounds.xMin; col < bounds.xMax; col++)
+            {
+                Vector3Int position = new Vector3Int(col, row, 0);
+                if (SaveGameManager.SaveDataStorage.list[itemInList + 6] < 100)
+                {
+                    Vector3Int generatedSavedPosition = new Vector3Int(SaveGameManager.SaveDataStorage.list[itemInList + 7],
+                        SaveGameManager.SaveDataStorage.list[itemInList + 8], 0);
+                    savedTile = tetrominoes[SaveGameManager.SaveDataStorage.list[itemInList + 6]].tile;
+                    tilemap.SetTile(generatedSavedPosition, savedTile);
+                }
+                itemInList = itemInList+3;
+            }
+            row++;
+        }
+    }
+    
     public void SpawnPiece()
     {
         
@@ -80,11 +140,12 @@ public class Board : MonoBehaviour
         TetrominoData nextPiecedata= this.tetrominoes[randomNextPiece];
         
         random=randomNextPiece;
-        
+
+        activePieceRotation = nextPieceStartRotation;
+        nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
         activePiece.Initialize(this, spawnPosition, data);
         nextactivePiece.Initialize(this, this.spawnPositionOfNextPiece,  nextPiecedata);
-        startRotation = nextPieceStartRotation;
-        nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
+        
         if (IsValidPOsition(this.activePiece, activePiece.position))
         {
             Set(this.activePiece);
@@ -97,7 +158,7 @@ public class Board : MonoBehaviour
         }
     }
 
-     private void GameOver()
+    private void GameOver()
      {
         this.tilemap.ClearAllTiles();
      }
@@ -108,6 +169,7 @@ public class Board : MonoBehaviour
         {
             Vector3Int tilePosition = piece.cells[i]+piece.position;
             this.tilemap.SetTile(tilePosition, piece.data.tile);
+            
         }
     }
 
@@ -139,6 +201,31 @@ public class Board : MonoBehaviour
         return true;
     }
 
+    public int ScanTileMap(Vector3Int position)
+    {
+        if (tilemap.GetTile(position) == null) return 100;
+        string name = tilemap.GetTile(position).name;
+        switch (name)
+        {
+            case "Red":
+                return  (int)Tetromino.Z;
+            case "Yellow":
+                return (int)Tetromino.O;
+            case "Green":
+                return (int)Tetromino.S;
+            case "Cyan":
+                return (int)Tetromino.I;
+            case "Blue":
+                return (int)Tetromino.J;
+            case "Orange":
+                return (int)Tetromino.L;
+            case "Purple":
+                return (int)Tetromino.T;
+        }
+
+        return 100;
+    }
+
     public void ClearLines()
     {
         RectInt bounds = this.Bounds;
@@ -148,8 +235,8 @@ public class Board : MonoBehaviour
             if(IsLineFull(row))
             {
                 LineClear(row);
-                saveMyGame.score++;//score++;
-                UpdateScore(saveMyGame.score);
+                score++;//score++;
+                UpdateScore(score);
             }
             else {
                 row++;
@@ -180,11 +267,49 @@ public class Board : MonoBehaviour
                 position = new Vector3Int(col, row, 0);
                 tilemap.SetTile(position, above);
             }
-
             row++;
         }
     }
 
+    public void SaveCurrentPiece() 
+    {
+        list.Add((int)activePiece.data.tetromino);
+        list.Add(activePiece.position.x);
+        list.Add(activePiece.position.y);
+    }
+    
+    public void SaveNextPiece() 
+    {
+        list.Add((int)nextactivePiece.data.tetromino);
+        list.Add(nextactivePiece.position.x);
+        list.Add(nextactivePiece.position.y);
+    }
+    
+    public void SaveBoardPixels()
+    {
+        RectInt bounds = Bounds;
+
+       int  row = bounds.yMin;
+        // Shift every row above down one
+        while (row < bounds.yMax)
+        {
+        for (int col = bounds.xMin; col < bounds.xMax; col++)
+        {
+            Vector3Int position = new Vector3Int(col, row, 0);
+            list.Add(ScanTileMap(position));
+            list.Add(position.x);
+            list.Add(position.y);
+        }
+        row++;
+        }
+    }
+
+    /*public void SaveRotations()
+    {
+        SaveGameManager.SaveDataStorage.activePieceRotation = activePiece.rotationIndex;
+        SaveGameManager.SaveDataStorage.nextPieceRotation = nextactivePiece.rotationIndex;
+    }
+    */
     bool IsLineFull(int row)
     {
         RectInt bounds = this.Bounds;
@@ -200,8 +325,8 @@ public class Board : MonoBehaviour
         }
         return true;
     }
-/****************************************************************************************/
-public void SetNext(NextPiece piece)
+    
+    public void SetNext(NextPiece piece)
     {
         NextClear(piece);
         for (int i=0; i<piece.cells.Length; i++)
@@ -210,7 +335,8 @@ public void SetNext(NextPiece piece)
             this.tilemap.SetTile(tilePosition, piece.data.tile);
         }
     }
-public void NextClear(NextPiece piece)
+    
+    public void NextClear(NextPiece piece)
     {
         for (int i=0; i<piece.cells.Length; i++)
         {
@@ -223,15 +349,17 @@ public void NextClear(NextPiece piece)
     {
        text.text = "Score: " + score.ToString();
     }
+    
     void EraseScore()
     {
         //saveMyGame.score = 0;//score = 0;
-        saveMyGame.ResetData();
-        UpdateScore(saveMyGame.score);//UpdateScore(score);
+        SaveGameManager.ResetData();
+        UpdateScore(score);//UpdateScore(score);
     }
-    public void PrintLevel(string levelValue)
+    
+    public void PrintLevel(int levelValue)
     {
         //levelText.text = "Level : "+ levelValue.ToString();
-        levelText.text = levelValue;
+        levelText.text = levelValue.ToString();
     }
 }
