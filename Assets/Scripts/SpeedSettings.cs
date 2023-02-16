@@ -23,7 +23,7 @@ public class SpeedSettings : MonoBehaviour
      increaseBtn.onClick.AddListener(IncreaseFillBar);
      decreaseBtn.onClick.AddListener(DecreaseFillBar);
      exitMenu.onClick.AddListener(SpeedMenuOff);
-     speed = _saveGameManager.SavePlayerSettings.speed;
+     speed = _saveGameManager.savePlayerSettings.speed;
      SetSpeedBar();
      Debug.Log("Start SpeedSettings ....OK");
     }
@@ -64,24 +64,23 @@ public class SpeedSettings : MonoBehaviour
      {
       _step = 0;
      }
-     
     }
-    public void SpeedSettingsInit()
+    public void SpeedSettingsInit(float _speed)
     {
-     var speedcase = speedBar.fillAmount;
-     if (speedcase < 0.05f)
+     
+     if (Math.Abs(_speed - 2f) < 0.1f)
      {
       _step = 0;
      }  
-     else if (speedcase < 0.321f)
+     else if (Math.Abs(_speed - 1f) < 0.1f)
      {
       _step = 1;
      }
-     else if (0.321f <= speedcase && speedcase < 0.641f)
+     else if (Math.Abs(_speed - 0.5f) < 0.1f)
      {
       _step = 2;
      }
-     else if (0.641f <= speedcase && speedcase <= 1f)
+     else if (Math.Abs(_speed - 0.25f) < 0.1f)
      {
       _step = 3;
      }

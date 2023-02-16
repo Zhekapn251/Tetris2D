@@ -44,12 +44,7 @@ public class Piece : MonoBehaviour
             Rotate(1);
         }
     }
-
-    private void Start()
-    {
-        //board = GetComponent<Board>();
-    }
-
+    
     private void Update()
     {
         board.Clear(this);
@@ -90,9 +85,8 @@ public class Piece : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            if (this.data.tetromino == Tetromino.M)
+            if (data.tetromino == Tetromino.M)
             {
-                //
                 PiuPiu();
             }
             else
@@ -100,32 +94,26 @@ public class Piece : MonoBehaviour
                 HardDrop();    
             }
         }
-
-        // Advance the piece to the next row every x seconds
         if (board.allowStepping)
         {
             if (Time.time > stepTime)
             {
                 Step();
             }
-
-            this.board.Set(this);
+            board.Set(this);
         }
     }
     
 
     private void Step()
     {
-       
-            stepTime = Time.time + board.stepSpeed;
+        stepTime = Time.time + board.stepSpeed;
             Move(Vector2Int.down);
             _soundManager.PlaySound(Sounds.MoveDown);
-            
             if (lockTime >= lockDelay)
             {
                 Lock();
             }
-
     }
 
     private void Lock()
@@ -145,19 +133,13 @@ public class Piece : MonoBehaviour
 
     public void Rotate(int direction)
     {
-        // Store the current rotation in case the rotation fails
-        // and we need to revert
         int originalRotation = rotationIndex;
-
-        // Rotate all of the cells using a rotation matrix
         rotationIndex = Wrap(rotationIndex + direction, 0, 4);
         ApplyRotationMatrix(direction);
 
-        if (!TestWallKicks(rotationIndex, direction))
-        {
-            rotationIndex = originalRotation;
-            ApplyRotationMatrix(-direction);
-        }
+        if (TestWallKicks(rotationIndex, direction)) return;
+        rotationIndex = originalRotation;
+        ApplyRotationMatrix(-direction);
     }
 
     private void ApplyRotationMatrix(int direction)
@@ -272,7 +254,7 @@ public class Piece : MonoBehaviour
         Vector3Int newPosition = position;
         newPosition.x +=translation.x;
         newPosition.y+=translation.y;
-        bool valid = this.board.IsValidPOsition(this, newPosition);
+        bool valid = this.board.IsValidPosition(this, newPosition);
         if(valid)
         {
             position = newPosition;

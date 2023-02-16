@@ -10,5 +10,7 @@ public class SavePlayerSettings
     public int level = 1;
     public bool isSaved = false;
     public float speed = 0.5f;
-    
+    public int lines = 0;
+    public int levelGoal = 5;
+
 }

@@ -17,12 +17,12 @@ public class LevelManager : MonoBehaviour
     private int minGoalCount = 3;
     private int maxGoalCount = 10;
     private int amountOfGeneratedObstacles;
-    private int levalGoal;
-    private float goalsIncrement;
-    private int lines;
+    public int levelGoal;
+    //private float goalsIncrement;
+    public int lines;
     [SerializeField] private Image progressBar;
-    [SerializeField] private LoseGame _loseGame;
-    [SerializeField] private WinGame _winGame;
+    //[SerializeField] private LoseGame _loseGame;
+    //[SerializeField] private WinGame _winGame;
     [SerializeField] private Fireworks _fireworks;
     
     public void GoalsGenerator()
@@ -35,8 +35,8 @@ public class LevelManager : MonoBehaviour
 
     private void GenerateGoalsForLevel()
     {
-        levalGoal = Random.Range(minGoalCount, maxGoalCount);
-        goalsIncrement = (float)1/(levalGoal);
+        levelGoal = Random.Range(minGoalCount, maxGoalCount);
+        //goalsIncrement = (float)1/(levelGoal);
     }
     
     private void GenerateObstacles(int amount)
@@ -54,7 +54,7 @@ public class LevelManager : MonoBehaviour
     public void UpdateGoalsLines()
     {
         lines++;
-        var value = (float)lines/levalGoal;
+        var value = (float)lines/levelGoal;
         AnimateProgressBar(value);
         if (GoalsIsReached())
         {
@@ -62,6 +62,11 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    public float ProgressBarInit()
+    {
+        float progressBarAmount;
+        return progressBarAmount = (float)lines / levelGoal;
+    }
     private void AnimateProgressBar(float goals)
     {
         DOTween.To(() => progressBar.fillAmount, value => progressBar.fillAmount = value, goals, 1);
@@ -71,9 +76,9 @@ public class LevelManager : MonoBehaviour
     {
 
         board.level++;
-        board.allowStepping = false;
+        board.AllowStepping(false);
         FireBaseInit.instance.FirebaseStartLevel(board.level);
-        board.textLevel.text = board.level.ToString();
+        board.UpdateTextLevelOnUI();
         _soundManager.PlaySound(Sounds.Win);
         _saveGameManager.SavePlayersSettings(false);
         _fireworks.FireworksEnable();
@@ -82,7 +87,7 @@ public class LevelManager : MonoBehaviour
 
     private bool GoalsIsReached()
     {
-        bool goalIsReached = lines == levalGoal;
+        bool goalIsReached = lines == levelGoal;
         return goalIsReached;
     }
 

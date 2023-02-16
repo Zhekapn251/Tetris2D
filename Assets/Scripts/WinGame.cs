@@ -20,7 +20,7 @@ public class WinGame : MonoBehaviour
     }
     public void ShowWinGame()
     {
-        board.allowStepping = false;
+        board.AllowStepping(false);
         gameObject.SetActive(true);
         score.text = board.score.ToString();
         GetWinnerRate();
@@ -47,7 +47,7 @@ public class WinGame : MonoBehaviour
         gameObject.SetActive(false);
         _fireworks.FireWorksDisable();
         board.StartGameRoutinesWithoutSaving();
-        board.allowStepping = true;
+        board.AllowStepping(true);
     }
     public void MenuOnWinGame()
     {

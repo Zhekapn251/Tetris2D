@@ -26,6 +26,14 @@ public class Menu : MonoBehaviour
         exitBtn.onClick.AddListener(ExitMenu);
     }
     
+    public void OpenMainMenu()
+    {
+        if (gameObject.activeInHierarchy == false)
+        {
+            board.AllowStepping(false);
+            gameObject.SetActive(true);
+        }
+    }
     private void SaveButtonClicked()
     {
         SaveGameManager.SaveGame();
@@ -42,7 +50,7 @@ public class Menu : MonoBehaviour
         {
             gameObject.SetActive(false);
             _exitDialog.CancelExit();
-            board.allowStepping = true;
+            board.AllowStepping(true);
             //Time.timeScale = 1;
         }
     }

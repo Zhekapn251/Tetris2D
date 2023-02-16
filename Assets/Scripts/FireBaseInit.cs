@@ -46,7 +46,6 @@ public  class FireBaseInit : MonoBehaviour
                 Debug.LogError("Could not resolve all Firebase dependencies: " + dependencyStatus);
             }
         });
-        Debug.Log( "end Of Start FireBaseInit.cs");
     }
 
     public void FirebaseStartLevel(int levelNumber=1)

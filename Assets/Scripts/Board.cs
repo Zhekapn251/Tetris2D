@@ -12,65 +12,58 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour
 {
 
-    public SaveGameManager SaveGameManager;
-    public FireEffectPool FireEffectPool;
+    [SerializeField] private SaveGameManager saveGameManager;
+    [SerializeField] private FireEffectPool fireEffectPool;
+    [SerializeField] private SpeedSettings speedSettings;
+    [SerializeField] private SoundManager soundManager;
+    [SerializeField] private GameOverFade fadeGameOver;
+    [SerializeField] private LevelManager levelManager;
+    [SerializeField] private TMP_Text textScore;
+    [SerializeField] private TMP_Text textLevel;
+    private Vector2Int _boardSize = new Vector2Int(10, 20);
+    private Vector3Int _spawnPosition = new Vector3Int(-3, 8, 0);
+    private Vector3Int _spawnPositionOfNextPiece = new Vector3Int(6, 7, 0);
+    private int randomNextPiece=-1;
+    private int _random;  
+    private List<string> _tempLine;
+    private int frequencyOfTetrominoMAppearance = 2;
+    private int _countTetrominoM = 0;
+    private TetrominoData _data;
+    private TetrominoData _nextPieceData;
     public Tilemap tilemap { get; private set; }
     public Piece activePiece { get; private set; }
     public NextPiece nextactivePiece { get; private set; }
     public TetrominoData[] tetrominoes;
-    public List<int> list = new List<int>();
-    [SerializeField] private SpeedSettings _speedSettings;
-    [SerializeField] private SoundManager _soundManager;
-    [SerializeField] private LoseGame _loseGame;
-    public Vector2Int boardSize = new Vector2Int(10, 20);
-    public Vector3Int spawnPosition = new Vector3Int(-3, 8, 0);
-    public Vector3Int spawnPositionOfNextPiece = new Vector3Int(6, 7, 0);
-    public int randomNextPiece=-1;
-    int random;
-    public TMP_Text textScore;
-    
+    public List<int> listOfAllTilesToSave = new List<int>();
     public int score = 0;
-    //SaveMyGame saveMyGame = new SaveMyGame();
-    public TMP_Text textLevel;
     public  int level = 1;
     public int activePieceRotation;
     public int nextPieceStartRotation;
-    public bool notAnimated=true;
-    private List<string> tempLine;
-    private int frequencyOfTetrominoMAppearance = 2;
-    private int countTetrominoM = 0;
-    public LevelManager levelManager;
-    private TetrominoData data;
-    private TetrominoData nextPiecedata;
-    public float stepSpeed = 1f;
-    public bool allowStepping = true;
-    [SerializeField] GameOverFade _fadeGameOver;
-    
-
+    public float stepSpeed { set; get; }
+    public bool allowStepping { private set; get; } = true;
+    public RectInt Bounds
+    { get
+        {
+            Vector2Int position = new Vector2Int(-_boardSize.x/2-2,-_boardSize.y/2);
+            return new RectInt(position, _boardSize);
+        }
+    }
     private void Awake()
     {
-        //swipe = GetComponent<Swipe>();
         DOTween.Init();
-        
         Debug.Log("Awake() ---- OK");
     }
     
     private void Start()
     {
-        _speedSettings.SpeedSettingsInit();
-        tilemap = GetComponentInChildren<Tilemap>();
-        activePiece = GetComponent<Piece>();
-        nextactivePiece = GetComponent<NextPiece>();
-        SaveGameManager.LoadPlayerData();
-        
-
-
+        InitGameComponents();
+        saveGameManager.LoadPlayerData(); //0.5
+        speedSettings.SpeedSettingsInit(stepSpeed);
         for (int i=0; i<tetrominoes.Length; i++)
         {
             tetrominoes[i].Initialize();
         }
-        
-        if (SaveGameManager.isSaved)
+        if (saveGameManager.isSaved)
         {
             StartGameRoutinesWithSaving();
         }
@@ -78,28 +71,35 @@ public class Board : MonoBehaviour
         {
             StartGameRoutinesWithoutSaving();
         }
-        
         Debug.Log("Start() ---- OK");
     }
 
+    private void InitGameComponents()
+    {
+        tilemap = GetComponentInChildren<Tilemap>();
+        activePiece = GetComponent<Piece>();
+        nextactivePiece = GetComponent<NextPiece>();
+    }
+
+    public void AllowStepping(bool allowSteps)
+    {
+        allowStepping = allowSteps;
+    }
     public float CalculateNumberOfStars()
     {
         float rate;
-        int highestTileInBoard = 0;
+        var highestTileInBoard = 0;
         RectInt bounds = Bounds;
 
-        int  row = bounds.yMax;
+        var  row = bounds.yMax;
         // Shift every row above down one
         while (row > bounds.yMin && highestTileInBoard==0)
         {
-            for (int col = bounds.xMin; col < bounds.xMax && highestTileInBoard==0; col++)
+            for (var col = bounds.xMin; col < bounds.xMax && highestTileInBoard==0; col++)
             {
-                Vector3Int position = new Vector3Int(col, row, 0);
-                if (tilemap.HasTile(position))
-                {
-                    highestTileInBoard = position.y;
-                    Debug.Log("highest = "+highestTileInBoard);
-                }
+                var position = new Vector3Int(col, row, 0);
+                if (!tilemap.HasTile(position)) continue;
+                highestTileInBoard = position.y;
             }    
             row--;
         }
@@ -115,42 +115,41 @@ public class Board : MonoBehaviour
         {
             rate = 0.34f;
         }
-        Debug.Log("rate = "+ rate);
-
         return rate;
     }
-private void LoadGameSettings()
+    private void LoadGameSettings()
     {
-        SaveGameManager.LoadData();
+        saveGameManager.LoadData();
     }
 
-    public void StartGameRoutinesWithSaving()
+    private void StartGameRoutinesWithSaving()
     {
         LoadGameSettings();
-        activePiece.Initialize(this, new Vector3Int(SaveGameManager.SaveDataStorage.list[1],
-            SaveGameManager.SaveDataStorage.list[2],0), tetrominoes[SaveGameManager.SaveDataStorage.list[0]]);
+        activePiece.Initialize(this, new Vector3Int(saveGameManager.saveDataStorage.list[1],
+            saveGameManager.saveDataStorage.list[2],0), tetrominoes[saveGameManager.saveDataStorage.list[0]]);
             
-        nextactivePiece.Initialize(this, new Vector3Int(SaveGameManager.SaveDataStorage.list[4],
-            SaveGameManager.SaveDataStorage.list[5],0), tetrominoes[SaveGameManager.SaveDataStorage.list[3]]);
-        randomNextPiece = SaveGameManager.SaveDataStorage.list[3];
-        random = randomNextPiece;
-            
+        nextactivePiece.Initialize(this, new Vector3Int(saveGameManager.saveDataStorage.list[4],
+            saveGameManager.saveDataStorage.list[5],0), tetrominoes[saveGameManager.saveDataStorage.list[3]]);
+        randomNextPiece = saveGameManager.saveDataStorage.list[3];
+        _random = randomNextPiece;
         Set(activePiece);
         SetNext(nextactivePiece);
         LoadTilesFromSaveSpot();
-        
         allowStepping = true;
         PrintLevel(level);
         UpdateScore(score);
     }
-    
+
+    public void UpdateTextLevelOnUI()
+    {
+        textLevel.text = level.ToString();
+    }
     public void StartGameRoutinesWithoutSaving()
     {
-        //Clear(activePiece);
         tilemap.ClearAllTiles();
         StartLevelGeneration();
-        activePieceRotation = UnityEngine.Random.Range(0, 4);
-        nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
+        activePieceRotation = Random.Range(0, 4);
+        nextPieceStartRotation = Random.Range(0, 4);
         allowStepping = true;
         PrintLevel(level);
         UpdateScore(score);
@@ -161,153 +160,119 @@ private void LoadGameSettings()
     {
         levelManager.GoalsGenerator();    
     }
-
-    public RectInt Bounds
-    {
-        get
-        {
-            Vector2Int position = new Vector2Int(-this.boardSize.x/2-2,-this.boardSize.y/2);
-            return new RectInt(position, this.boardSize);
-        }
-    }
     
-    public void LoadTilesFromSaveSpot()
+    private void LoadTilesFromSaveSpot()
     {
         RectInt bounds = Bounds;
         int itemInList = 0;
-        Tile savedTile;
         int  row = bounds.yMin;
-        // Shift every row above down one
         while (row < bounds.yMax)
         {
-            for (int col = bounds.xMin; col < bounds.xMax; col++)
+            for (var col = bounds.xMin; col < bounds.xMax; col++)
             {
-                Vector3Int position = new Vector3Int(col, row, 0);
-                if (SaveGameManager.SaveDataStorage.list[itemInList + 6] < 100)
+                if (saveGameManager.saveDataStorage.list[itemInList + 6] < 100)
                 {
-                    Vector3Int generatedSavedPosition = new Vector3Int(SaveGameManager.SaveDataStorage.list[itemInList + 7],
-                        SaveGameManager.SaveDataStorage.list[itemInList + 8], 0);
-                    savedTile = tetrominoes[SaveGameManager.SaveDataStorage.list[itemInList + 6]].tile;
+                    var generatedSavedPosition = new Vector3Int(saveGameManager.saveDataStorage.list[itemInList + 7],
+                        saveGameManager.saveDataStorage.list[itemInList + 8], 0);
+                    var savedTile = tetrominoes[saveGameManager.saveDataStorage.list[itemInList + 6]].tile;
                     tilemap.SetTile(generatedSavedPosition, savedTile);
                 }
-                itemInList = itemInList+3;
+                itemInList += 3;
             }
             row++;
         }
     }
-    
-    public void SpawnPiece()
+
+    private void SpawnPiece()
     {
         if(randomNextPiece == -1)
         {
-            random = Random.Range(0,this.tetrominoes.Length-1);
+            _random = Random.Range(0, tetrominoes.Length-1);
         }
         GenerateActivePieceAndNextPiece();
        
-        if (nextPiecedata.tetromino == Tetromino.M)
+        if (_nextPieceData.tetromino == Tetromino.M)
         {
-            countTetrominoM++;
-            if (countTetrominoM > frequencyOfTetrominoMAppearance)
+            _countTetrominoM++;
+            if (_countTetrominoM > frequencyOfTetrominoMAppearance)
             {
-                countTetrominoM = 0;
+                _countTetrominoM = 0;
             }
-
-            if (countTetrominoM < frequencyOfTetrominoMAppearance)
+            if (_countTetrominoM < frequencyOfTetrominoMAppearance)
             {
                 GenerateActivePieceAndNextPiece(true);
             }
         }
-        data = tetrominoes[random];
-        random=randomNextPiece;
+        _data = tetrominoes[_random];
+        _random=randomNextPiece;
         activePieceRotation = nextPieceStartRotation;
-        if (nextPiecedata.tetromino == Tetromino.M)
-        {
-            nextPieceStartRotation = 0;
-        }
-        else
-        {
-            nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
-        }
+        nextPieceStartRotation = _nextPieceData.tetromino == Tetromino.M ? 0 : Random.Range(0, 4);
         
-        activePiece.Initialize(this, spawnPosition, data);
-        Vector3Int correctedspawnPositionOfNextPiece = spawnPositionOfNextPiece;
-        if (nextPiecedata.tetromino == Tetromino.I && nextPieceStartRotation % 2 == 0)
+        activePiece.Initialize(this, _spawnPosition, _data);
+        Vector3Int correctedSpawnPositionOfNextPiece = _nextPieceData.tetromino switch
         {
-            correctedspawnPositionOfNextPiece = spawnPositionOfNextPiece+Vector3Int.left;
-        }
-        if (nextPiecedata.tetromino == Tetromino.M)
+            Tetromino.I when nextPieceStartRotation % 2 == 0 => _spawnPositionOfNextPiece + Vector3Int.left,
+            Tetromino.M => _spawnPositionOfNextPiece + Vector3Int.up,
+            _ => _spawnPositionOfNextPiece
+        };
+        
+        nextactivePiece.Initialize(this, correctedSpawnPositionOfNextPiece,  _nextPieceData);
+        
+        if (IsValidPosition(activePiece, activePiece.position))
         {
-            correctedspawnPositionOfNextPiece = spawnPositionOfNextPiece+Vector3Int.up;
-        }
-        
-        
-
-        nextactivePiece.Initialize(this, correctedspawnPositionOfNextPiece,  nextPiecedata);
-        
-        if (IsValidPOsition(this.activePiece, activePiece.position))
-        {
-            Set(this.activePiece); 
+            Set(activePiece); 
             SetNext(nextactivePiece);
         }
         else{
              
             GameOver();
-            
             EraseScore();
         }
     }
     
     private void GenerateActivePieceAndNextPiece(bool generateWithoutTetrominoM=false)
     {
-
         int tetrominoM = generateWithoutTetrominoM ? 1 : 0;
-        
         randomNextPiece = Random.Range(0, tetrominoes.Length-1-tetrominoM);//
-        nextPiecedata = tetrominoes[randomNextPiece];
-        
+        _nextPieceData = tetrominoes[randomNextPiece];
     }
 
     private void GameOver()
      {
-         
-         _soundManager.PlaySound(Sounds.Lose);
-         //this.tilemap.ClearAllTiles();
-         //_loseGame.ShowLoseGame();
+         soundManager.PlaySound(Sounds.Lose);
          allowStepping = false;
          GameOverSequence();
-         
      }
 
-    public void GameOverSequence()
+    private void GameOverSequence()
     {
-        _fadeGameOver.LooseFade();
+        fadeGameOver.LooseFade();
     }
-
     
     public void Set(Piece piece)
     {
-        for (int i=0; i<piece.cells.Length; i++)
+        foreach (var cell in piece.cells)
         {
-            Vector3Int tilePosition = piece.cells[i]+piece.position;
+            Vector3Int tilePosition = cell+piece.position;
             tilemap.SetTile(tilePosition, piece.data.tile);
         }
     }
-
+    
     public void Clear(Piece piece)
     {
-        for (int i=0; i<piece.cells.Length; i++)
+        foreach (var cell in piece.cells)
         {
-            Vector3Int tilePosition = piece.cells[i]+piece.position;
+            Vector3Int tilePosition = cell+piece.position;
             tilemap.SetTile(tilePosition, null);
         }
     }
 
-    public bool  IsValidPOsition(Piece piece, Vector3Int position)
+    public bool  IsValidPosition(Piece piece, Vector3Int position)
     {
-        RectInt bounds = this.Bounds;
-        for( int i=0; i<piece.cells.Length;i++)
+        RectInt bounds = Bounds;
+        foreach (var cell in piece.cells)
         {
-            Vector3Int tilePosition = piece.cells[i]+position;
+            Vector3Int tilePosition = cell+position;
             if(tilemap.HasTile(tilePosition))
             {
                 return false;
@@ -320,37 +285,28 @@ private void LoadGameSettings()
         return true;
     }
 
-    public int ScanTileMap(Vector3Int position)
+    private int ScanTileMap(Vector3Int position)
     {
         if (tilemap.GetTile(position) == null) return 100;
         string name = tilemap.GetTile(position).name;
-        switch (name)
+        return name switch
         {
-            case "Red":
-                return  (int)Tetromino.Z;
-            case "Yellow":
-                return (int)Tetromino.O;
-            case "Green":
-                return (int)Tetromino.S;
-            case "Cyan":
-                return (int)Tetromino.I;
-            case "Blue":
-                return (int)Tetromino.J;
-            case "Orange":
-                return (int)Tetromino.L;
-            case "Purple":
-                return (int)Tetromino.T;
-            case "Magenta":
-                return (int)Tetromino.M;
-        }
-
-        return 100;
+            "Red" => (int)Tetromino.Z,
+            "Yellow" => (int)Tetromino.O,
+            "Green" => (int)Tetromino.S,
+            "Cyan" => (int)Tetromino.I,
+            "Blue" => (int)Tetromino.J,
+            "Orange" => (int)Tetromino.L,
+            "Purple" => (int)Tetromino.T,
+            "Magenta" => (int)Tetromino.M,
+            _ => 100
+        };
     }
 
-     public bool ClearLines()
+     public void ClearLines()
     {
-        List<int> fullRowsDelete = new List<int>();
-        RectInt bounds = this.Bounds;
+        var fullRowsDelete = new List<int>();
+        RectInt bounds = Bounds;
         int row= bounds.yMin;
         while (row<bounds.yMax)
         {
@@ -364,48 +320,43 @@ private void LoadGameSettings()
             row++;
         }
         
-        for (int i = 0; i < fullRowsDelete.Count; i++)
+        foreach (var fulRowDelete in fullRowsDelete)
         {
-            FireEffect fireEffect = FireEffectPool.GetEffect();
-            fireEffect.transform.position = new Vector3(-2, fullRowsDelete[i] + 0.5f, 0);
+            FireEffect fireEffect = fireEffectPool.GetEffect();
+            fireEffect.transform.position = new Vector3(-2, fulRowDelete + 0.5f, 0);
             fireEffect.EnableEffects();
         }
-        
+
         if (fullRowsDelete.Count > 0)
         {
             StartCoroutine(DeleteRows(fullRowsDelete));
-            return true;
+            return;
         }
         if (fullRowsDelete.Count==0)
         {
             SpawnPiece();
         }
-        return false;
     }
 
      private  void TilesColorDetect(int row)
      {
-         tempLine = new List<string>();
-         RectInt bounds = this.Bounds;
-         TileBase tempTile= ScriptableObject.CreateInstance<Tile>();
+         _tempLine = new List<string>();
+         RectInt bounds = Bounds;
          for(int col = bounds.xMin; col < bounds.xMax; col++)
          {
              Vector3Int position = new Vector3Int(col, row, 0);
-             tempTile=tilemap.GetTile(position);
-             tempLine.Add(tempTile.name);
+             var tempTile = tilemap.GetTile(position);
+             _tempLine.Add(tempTile.name);
          }
      }
-     
-     
-    IEnumerator DeleteRows(List<int> rows)
+
+     private IEnumerator DeleteRows(List<int> rows)
     {
-        notAnimated = false;
         yield return new WaitForSeconds(0.3f);
         for (int i = 0; i < rows.Count; i++)
         {
             LineClear(rows[i]);
-            score++;//score++;
-            //////////////LevelGenerator.CheckGoal(GoalsType.Lines);
+            score++;
             UpdateScore(score);
             for(int item=0; item<rows.Count; item++)
             {
@@ -413,7 +364,6 @@ private void LoadGameSettings()
             }
         }
         SpawnPiece();
-        notAnimated = true;
     }
 
     public void LineClear(int row)
@@ -426,8 +376,6 @@ private void LoadGameSettings()
             Vector3Int position = new Vector3Int(col, row, 0);
             tilemap.SetTile(position, null);
         }
-
-        // Shift every row above down one
         while (row < bounds.yMax)
         {
             for (int col = bounds.xMin; col < bounds.xMax; col++)
@@ -444,92 +392,85 @@ private void LoadGameSettings()
 
     public void SaveCurrentPiece() 
     {
-        list.Add((int)activePiece.data.tetromino);
-        list.Add(activePiece.position.x);
-        list.Add(activePiece.position.y);
+        listOfAllTilesToSave.Add((int)activePiece.data.tetromino);
+        listOfAllTilesToSave.Add(activePiece.position.x);
+        listOfAllTilesToSave.Add(activePiece.position.y);
     }
     
     public void SaveNextPiece() 
     {
-        list.Add((int)nextactivePiece.data.tetromino);
-        list.Add(nextactivePiece.position.x);
-        list.Add(nextactivePiece.position.y);
+        listOfAllTilesToSave.Add((int)nextactivePiece.data.tetromino);
+        listOfAllTilesToSave.Add(nextactivePiece.position.x);
+        listOfAllTilesToSave.Add(nextactivePiece.position.y);
     }
     
     public void SaveBoardPixels()
     {
         RectInt bounds = Bounds;
-
-       int  row = bounds.yMin;
-        // Shift every row above down one
+        int  row = bounds.yMin;
         while (row < bounds.yMax)
         {
-        for (int col = bounds.xMin; col < bounds.xMax; col++)
-        {
-            Vector3Int position = new Vector3Int(col, row, 0);
-            list.Add(ScanTileMap(position));
-            list.Add(position.x);
-            list.Add(position.y);
-        }
-        row++;
+            for (int col = bounds.xMin; col < bounds.xMax; col++)
+            {
+                Vector3Int position = new Vector3Int(col, row, 0);
+                listOfAllTilesToSave.Add(ScanTileMap(position));
+                listOfAllTilesToSave.Add(position.x);
+                listOfAllTilesToSave.Add(position.y);
+            }
+            row++;
         }
     }
 
 
-    bool IsLineFull(int row)
+    private bool IsLineFull(int row)
     {
-        RectInt bounds = this.Bounds;
-
+        RectInt bounds = Bounds;
         for(int col = bounds.xMin; col < bounds.xMax; col++)
         {
             Vector3Int position = new Vector3Int(col, row, 0);
-
-            if(!this.tilemap.HasTile(position))
+            if(!tilemap.HasTile(position))
             {
                 return false;
             }
         }
         return true;
     }
-    
-    public void SetNext(NextPiece piece)
+
+    private void SetNext(NextPiece piece)
     {
         NextClear(piece);
         for (int i=0; i<piece.cells.Length; i++)
         {
             Vector3Int tilePosition = piece.cells[i]+piece.position;
-            this.tilemap.SetTile(tilePosition, piece.data.tile);
+            tilemap.SetTile(tilePosition, piece.data.tile);
         }
     }
     
     public void NextClear(NextPiece piece)
     {
-        for (int i=0; i<piece.cells.Length; i++)
+        foreach (var cell in piece.cells)
         {
-            Vector3Int tilePosition = piece.cells[i]+piece.position;
-            this.tilemap.SetTile(tilePosition, null);
+            Vector3Int tilePosition = cell+piece.position;
+            tilemap.SetTile(tilePosition, null);
         }
     }
 
-    void UpdateScore(int score)
+    private void UpdateScore(int score)
     {
        textScore.text = "Score: " + score.ToString();
     }
-    
-    public void PrintLevel(int levelValue)
+
+    private void PrintLevel(int levelValue)
     {
         textLevel.text = levelValue.ToString();
     }
-    
-    void EraseScore()
+
+    private void EraseScore()
     {
-        //saveMyGame.score = 0;//score = 0;
-        SaveGameManager.ResetData();
+        saveGameManager.ResetData();
         UpdateScore(score);//UpdateScore(score);
     }
     
-    
-
     public void GenerateObstacle()
     {
         Vector3Int position = new Vector3Int();
@@ -539,11 +480,9 @@ private void LoadGameSettings()
             position =
                 new Vector3Int(Random.Range(Bounds.xMin, Bounds.xMax ), Random.Range(Bounds.yMin, Bounds.yMax - 3),
                     0);
-       } while (tilemap.HasTile(position));  
-        
-        
-        Tile randomTile = ScriptableObject.CreateInstance<Tile>();
-        randomTile = tetrominoes[Random.Range(0,tetrominoes.Length)].tile;
-        tilemap.SetTile(position,randomTile);
+        } 
+       while (tilemap.HasTile(position));
+       var randomTile = tetrominoes[Random.Range(0,tetrominoes.Length)].tile;
+       tilemap.SetTile(position,randomTile);
     }
 }
