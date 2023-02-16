@@ -16,17 +16,17 @@ public class NextPiece : MonoBehaviour
         this.board = board;
         this.position = position;
         this.data = data;
-         if (this.cells ==null)
-        {
+        
+        //{
             this.cells = new Vector3Int[data.cells.Length];
-        }
+        //}
         for(int i=0; i<data.cells.Length; i++)
         {
-            this.cells[i] = (Vector3Int)data.cells[i];
+            this.cells[i] = (Vector3Int)data.cells[i]; 
         }
-        for (int i=0; i<board.nextPieceStartRotation; i++)
-        {            
-            Rotate(1);
+        for (int i = 0; i < board.nextPieceStartRotation; i++)
+        {
+            //Rotate(1);
         }
     }
     
@@ -61,6 +61,10 @@ private void Rotate(int direction)
 
             switch (data.tetromino)
             {
+                case Tetromino.M:
+                    x = Mathf.RoundToInt(cell.x);
+                    y = Mathf.RoundToInt(cell.y);
+                    break;
                 case Tetromino.I:
                 case Tetromino.O:
                     // "I" and "O" are rotated from an offset center point

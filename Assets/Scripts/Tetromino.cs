@@ -9,6 +9,7 @@ public enum Tetromino
         L,
         S,
         Z,
+        M,
 
     }
 

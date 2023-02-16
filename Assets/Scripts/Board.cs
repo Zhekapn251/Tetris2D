@@ -23,7 +23,6 @@ public class Board : MonoBehaviour
     public Vector3Int spawnPositionOfNextPiece = new Vector3Int(5, 7, 0);
     public int randomNextPiece=-1;
     int random;
-    public Tile testtile;
     public TMP_Text text;
     public int score = 0;
     //SaveMyGame saveMyGame = new SaveMyGame();
@@ -145,26 +144,38 @@ public class Board : MonoBehaviour
     {
         if(randomNextPiece == -1)
         {
-            random = Random.Range(0, this.tetrominoes.Length);
+            random = Random.Range(0,this.tetrominoes.Length);
         }
-        randomNextPiece = Random.Range(0, this.tetrominoes.Length);
-        TetrominoData data = this.tetrominoes[random];
-        TetrominoData nextPiecedata= this.tetrominoes[randomNextPiece];
-        
+
+        randomNextPiece = Random.Range(0, tetrominoes.Length);//this.
+        TetrominoData data = this.tetrominoes[random];//[7];
+        TetrominoData nextPiecedata = this.tetrominoes[randomNextPiece];//[7];
+
         random=randomNextPiece;
 
         activePieceRotation = nextPieceStartRotation;
-        nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
+        if (nextPiecedata.tetromino == Tetromino.M)
+        {
+            
+            //Debug.Log("is= "+nextPiecedata.tetromino);
+            nextPieceStartRotation = 0;
+        }
+        else
+        {
+            //Debug.Log("nextPiecedata.tetromino= "+nextPiecedata.tetromino);
+            nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
+        }
+        
         activePiece.Initialize(this, spawnPosition, data);
         nextactivePiece.Initialize(this, this.spawnPositionOfNextPiece,  nextPiecedata);
         
         if (IsValidPOsition(this.activePiece, activePiece.position))
         {
-            Set(this.activePiece);
+            Set(this.activePiece); 
             SetNext(nextactivePiece);
         }
         else{
-            
+             
             GameOver();
             EraseScore();
         }
@@ -181,7 +192,6 @@ public class Board : MonoBehaviour
         {
             Vector3Int tilePosition = piece.cells[i]+piece.position;
             this.tilemap.SetTile(tilePosition, piece.data.tile);
-            
         }
     }
 
@@ -196,7 +206,6 @@ public class Board : MonoBehaviour
 
     public bool  IsValidPOsition(Piece piece, Vector3Int position)
     {
-        
         RectInt bounds = this.Bounds;
         for( int i=0; i<piece.cells.Length;i++)
         {
@@ -233,6 +242,8 @@ public class Board : MonoBehaviour
                 return (int)Tetromino.L;
             case "Purple":
                 return (int)Tetromino.T;
+            case "Magenta":
+                return (int)Tetromino.M;
         }
 
         return 100;
@@ -318,12 +329,11 @@ public class Board : MonoBehaviour
      {
          tempLine = new List<string>();
          RectInt bounds = this.Bounds;
-         TileBase tempTile= new Tile();
+         TileBase tempTile= ScriptableObject.CreateInstance<Tile>();
          for(int col = bounds.xMin; col < bounds.xMax; col++)
          {
              Vector3Int position = new Vector3Int(col, row, 0);
              tempTile=tilemap.GetTile(position);
-             Debug.Log(tempTile.name);
              tempLine.Add(tempTile.name);
          }
      }
@@ -406,12 +416,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    /*public void SaveRotations()
-    {
-        SaveGameManager.SaveDataStorage.activePieceRotation = activePiece.rotationIndex;
-        SaveGameManager.SaveDataStorage.nextPieceRotation = nextactivePiece.rotationIndex;
-    }
-    */
+
     bool IsLineFull(int row)
     {
         RectInt bounds = this.Bounds;
