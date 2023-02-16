@@ -16,6 +16,7 @@ public class Piece : MonoBehaviour
     public float moveDelay = 0.1f;
     public float lockDelay = 0.5f;
     [SerializeField] private CoroutinesManager _coroutinesManager;
+    [SerializeField] private SoundManager _soundManager;
     private float stepTime;
     private float moveTime;
     private float lockTime;
@@ -87,7 +88,15 @@ public class Piece : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            HardDrop();
+            if (this.data.tetromino == Tetromino.M)
+            {
+                //
+                PiuPiu();
+            }
+            else
+            {
+                HardDrop();    
+            }
         }
 
         // Advance the piece to the next row every x seconds
@@ -105,9 +114,11 @@ public class Piece : MonoBehaviour
 
         // Step down to the next row
         Move( Vector2Int.down);
+        _soundManager.PlaySound(Sounds.MoveDown);
 
         // Once the piece has been inactive for too long it becomes locked
         if (lockTime >= lockDelay) {
+            _soundManager.PlaySound(Sounds.Lock);
             Lock();
         }
        
@@ -115,14 +126,17 @@ public class Piece : MonoBehaviour
 
     private void Lock()
     {
-        board.Set(this);
+        if (this.data.tetromino == Tetromino.M)
+        {
+            board.Clear(this);
+        }
+        else
+        {
+            board.Set(this);
+        }
+
         board.NextClear(board.nextactivePiece);
         board.ClearLines();
-        //if (board.notAnimated)
-        //{
-          //  board.SpawnPiece();
-        //}
-            
     }
 
     public void Rotate(int direction)
@@ -182,14 +196,30 @@ public class Piece : MonoBehaviour
     public void HardDrop()
     {
         stepTime = Time.time + stepDelay;
-        while (Move( Vector2Int.down))
-        {
-            continue;
-        }
-        Lock();
-    
+            while (Move(Vector2Int.down))
+            {
+                continue;
+            }
+
+            Lock(); 
     }
 
+    public void PiuPiu()
+    {
+        RectInt bounds = board.Bounds;
+        int col= this.position.x;//x - col         y - row
+        int row = position.y-2;
+        while (row >= bounds.yMin)
+        {
+            Vector3Int position = new Vector3Int(col, row, 0);
+            if (board.tilemap.HasTile(position))
+            {
+                board.tilemap.SetTile(position,null);
+                break;
+            }
+            row--;
+        }
+    }
     
     private bool TestWallKicks(int rotationIndex, int rotationDirection)
     {
@@ -218,14 +248,11 @@ public class Piece : MonoBehaviour
         return Wrap(wallKickIndex, 0, data.wallKicks.GetLength(0));
     }
     
-    private int Wrap(int input, int min, int max)
-    {
-        if (input < min) {
-            return max - (min - input) % (max - min);
-        } else {
-            return min + (input - min) % (max - min);
-        }
-    }
+    private int Wrap(int input, int min, int max) =>
+        input < min 
+            ? max - (min - input) % (max - min)
+            : min + (input - min) % (max - min);
+
     public bool Move(Vector2Int translation)        // translation -- sdvig
     {
         Vector3Int newPosition = position;

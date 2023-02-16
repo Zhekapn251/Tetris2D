@@ -17,7 +17,7 @@ public class Board : MonoBehaviour
     public NextPiece nextactivePiece { get; private set; }
     public TetrominoData[] tetrominoes;
     public List<int> list = new List<int>();
-    
+    [SerializeField] private SoundManager _soundManager;
     public Vector2Int boardSize = new Vector2Int(10, 20);
     public Vector3Int spawnPosition = new Vector3Int(-3, 8, 0);
     public Vector3Int spawnPositionOfNextPiece = new Vector3Int(5, 7, 0);
@@ -33,23 +33,28 @@ public class Board : MonoBehaviour
     public int nextPieceStartRotation;
     public bool notAnimated=true;
     private List<string> tempLine;
-    public TMP_Text textBlue;
-    public TMP_Text textCyan;
-    public TMP_Text textGreen;
-    public TMP_Text textOrange;
-    public TMP_Text textPurple;
-    public TMP_Text textRed;
-    public TMP_Text textYellow;
+    public SquareGoalItem[] SquareGoalItems;
+    //public TMP_Text textBlue;
+    //public TMP_Text textCyan;
+    //public TMP_Text textGreen;
+    //public TMP_Text textOrange;
+    //public TMP_Text textPurple;
+    //public TMP_Text textRed;
+    //public TMP_Text textYellow;
+    //public TMP_Text textLines;
     
-    
+    [FormerlySerializedAs("LevelGenerator")] public LevelManager levelManager;
 
 
     private void Awake()
     {
+        //swipe = GetComponent<Swipe>();
+        
         SaveGameManager.SettingLoader();
         tilemap = GetComponentInChildren<Tilemap>();
         activePiece = GetComponentInChildren<Piece>();
         nextactivePiece = GetComponentInChildren<NextPiece>();
+        
         
         for (int i=0; i<tetrominoes.Length; i++)
         {
@@ -101,11 +106,17 @@ public class Board : MonoBehaviour
     
     private void StartGameRoutinesWithoutSaving()
     {
+        StartLevelGeneration();
         activePieceRotation = UnityEngine.Random.Range(0, 4);
         nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
         SpawnPiece();
     }
-    
+
+    private void StartLevelGeneration()
+    {
+        levelManager.GoalsGenerator();    
+    }
+
     public RectInt Bounds
     {
         get
@@ -156,13 +167,10 @@ public class Board : MonoBehaviour
         activePieceRotation = nextPieceStartRotation;
         if (nextPiecedata.tetromino == Tetromino.M)
         {
-            
-            //Debug.Log("is= "+nextPiecedata.tetromino);
             nextPieceStartRotation = 0;
         }
         else
         {
-            //Debug.Log("nextPiecedata.tetromino= "+nextPiecedata.tetromino);
             nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
         }
         
@@ -177,6 +185,7 @@ public class Board : MonoBehaviour
         else{
              
             GameOver();
+            _soundManager.PlaySound(Sounds.Lose);
             EraseScore();
         }
     }
@@ -260,19 +269,20 @@ public class Board : MonoBehaviour
             {
                 fullRowsDelete.Add(row);
                 TilesColorDetect(row);
-                WriteKilledBlocksToSkreen(tempLine);
+                //WriteKilledBlocksToScreen(tempLine);
+                levelManager.UpdateGoalsLines();
+                levelManager.UpdateGoalsValues(tempLine);
             }
             row++;
-
         }
+        
         for (int i = 0; i < fullRowsDelete.Count; i++)
         {
             FireEffect fireEffect = FireEffectPool.GetEffect();
             fireEffect.transform.position = new Vector3(-2, fullRowsDelete[i] + 0.5f, 0);
             fireEffect.EnableEffects();
         }
-
-
+        
         if (fullRowsDelete.Count > 0)
         {
             StartCoroutine(DeleteRows(fullRowsDelete));
@@ -285,7 +295,7 @@ public class Board : MonoBehaviour
         return false;
     }
 
-     private void WriteKilledBlocksToSkreen(List<string> tempLine)
+    /* private void WriteKilledBlocksToScreen(List<string> tempLine)
      {
          
          for (int i = 0; i < tempLine.Count; i++)
@@ -324,7 +334,7 @@ public class Board : MonoBehaviour
              }
          }
      }
-
+*/
      private  void TilesColorDetect(int row)
      {
          tempLine = new List<string>();
@@ -347,6 +357,7 @@ public class Board : MonoBehaviour
         {
             LineClear(rows[i]);
             score++;//score++;
+            //////////////LevelGenerator.CheckGoal(GoalsType.Lines);
             UpdateScore(score);
             for(int item=0; item<rows.Count; item++)
             {
@@ -468,5 +479,22 @@ public class Board : MonoBehaviour
     {
         //levelText.text = "Level : "+ levelValue.ToString();
         levelText.text = levelValue.ToString();
+    }
+
+    public void GenerateObstacle()
+    {
+        Vector3Int position = new Vector3Int();
+       do
+        {
+            Debug.Log(position);
+            position =
+                new Vector3Int(Random.Range(Bounds.xMin, Bounds.xMax ), Random.Range(Bounds.yMin, Bounds.yMax - 3),
+                    0);
+       } while (tilemap.HasTile(position));  
+        
+        
+        Tile randomTile = ScriptableObject.CreateInstance<Tile>();
+        randomTile = tetrominoes[Random.Range(0,tetrominoes.Length)].tile;
+        tilemap.SetTile(position,randomTile);
     }
 }

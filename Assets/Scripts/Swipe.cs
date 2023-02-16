@@ -32,7 +32,6 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
       //  _coroutinesManager = GetComponent<CoroutinesManager>();
     }
 
-
     public void OnPointerDown(PointerEventData eventData)
     {
         isPresed = true;
@@ -59,19 +58,6 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         isPresed = false;
     }
     
-    /*private void Update()
-    {
-        if (isPresed)
-        {
-            frameCount ++;
-                if (frameCount==11)
-                {
-                    frameCount = 0;
-                }
-
-        }
-    }
-*/
     private void CalculateDistance()
     {
         delta = (startPosition-endPosition).magnitude;
@@ -80,10 +66,21 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
     private void Tapping()
     {
-        board.Clear(board.activePiece);
-        board.activePiece.HardDrop();
-        board.Set(board.activePiece);
+        if (board.activePiece.data.tetromino == Tetromino.M)
+        {
+            //Piece.PiuPiu();
+            board.activePiece.PiuPiu();
+            soundManager.PlaySound(Sounds.Fire);
+        }
+        else
+        {
+            board.Clear(board.activePiece);
+            board.activePiece.HardDrop();
+            soundManager.PlaySound(Sounds.Drop);
+            board.Set(board.activePiece);
+        }
     }
+
 
     private void SwipingLeftRight()
     {
@@ -152,20 +149,20 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             board.activePiece.Move(Vector2Int.right);
             board.Set(board.activePiece);
         }
-        soundManager.PlaySound("move");
+        soundManager.PlaySound(Sounds.MoveAside);
         distanceX = 0f;
 
 
     }
     private void SwipingUpDown()
     {
-        Debug.Log("distanceY= "+distanceY);
         if (distanceY > 150)
         {
             coroutinesManager.StartAppearingCoroutine(Arrow.down);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.down);
             board.Set(board.activePiece);
+            soundManager.PlaySound(Sounds.MoveDown);
         }
         else if (distanceY < -150)
         {
@@ -173,7 +170,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             board.Clear(board.activePiece);
             board.activePiece.Rotate(1);
             board.Set(board.activePiece);
-            soundManager.PlaySound("rotate");
+            soundManager.PlaySound(Sounds.Rotate);
 
         }
 
