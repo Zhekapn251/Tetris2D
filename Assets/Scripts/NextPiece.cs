@@ -33,8 +33,7 @@ public class NextPiece : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //this.board.NextClear(this);
-        this.board.SetNext(this);
+        //this.board.SetNext(this);
     }
     
 

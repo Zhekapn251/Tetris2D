@@ -120,7 +120,11 @@ public class Piece : MonoBehaviour
         board.Set(this);
         board.NextClear(board.nextactivePiece);
         board.ClearLines();
-        board.SpawnPiece();
+        //if (board.notAnimated)
+        //{
+          //  board.SpawnPiece();
+        //}
+            
     }
 
     public void Rotate(int direction)
@@ -175,11 +179,12 @@ public class Piece : MonoBehaviour
 
     public void HardDrop()
     {
+        stepTime = Time.time + stepDelay;
         while (Move( Vector2Int.down))
         {
             continue;
         }
-    Lock();
+        Lock();
     
     }
 

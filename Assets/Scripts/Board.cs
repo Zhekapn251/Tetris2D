@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TMPro;
@@ -10,7 +11,7 @@ public class Board : MonoBehaviour
 {
 
     public SaveGameManager SaveGameManager;
-    
+    public FireEffectPool FireEffectPool;
     public Tilemap tilemap { get; private set; }
     public Piece activePiece { get; private set; }
     public NextPiece nextactivePiece { get; private set; }
@@ -31,7 +32,19 @@ public class Board : MonoBehaviour
 
     public int activePieceRotation;
     public int nextPieceStartRotation;
+    public bool notAnimated=true;
+    private List<string> tempLine;
+    public TMP_Text textBlue;
+    public TMP_Text textCyan;
+    public TMP_Text textGreen;
+    public TMP_Text textOrange;
+    public TMP_Text textPurple;
+    public TMP_Text textRed;
+    public TMP_Text textYellow;
     
+    
+
+
     private void Awake()
     {
         SaveGameManager.SettingLoader();
@@ -130,7 +143,6 @@ public class Board : MonoBehaviour
     
     public void SpawnPiece()
     {
-        
         if(randomNextPiece == -1)
         {
             random = Random.Range(0, this.tetrominoes.Length);
@@ -226,23 +238,113 @@ public class Board : MonoBehaviour
         return 100;
     }
 
-    public void ClearLines()
+     public bool ClearLines()
     {
+        List<int> fullRowsDelete = new List<int>();
         RectInt bounds = this.Bounds;
         int row= bounds.yMin;
         while (row<bounds.yMax)
         {
             if(IsLineFull(row))
             {
-                LineClear(row);
-                score++;//score++;
-                UpdateScore(score);
+                fullRowsDelete.Add(row);
+                TilesColorDetect(row);
+                WriteKilledBlocksToSkreen(tempLine);
             }
-            else {
-                row++;
-            }
+            row++;
+
+        }
+        for (int i = 0; i < fullRowsDelete.Count; i++)
+        {
+            FireEffect fireEffect = FireEffectPool.GetEffect();
+            fireEffect.transform.position = new Vector3(-2, fullRowsDelete[i] + 0.5f, 0);
+            fireEffect.EnableEffects();
         }
 
+
+        if (fullRowsDelete.Count > 0)
+        {
+            StartCoroutine(DeleteRows(fullRowsDelete));
+            return true;
+        }
+        if (fullRowsDelete.Count==0)
+        {
+            SpawnPiece();
+        }
+        return false;
+    }
+
+     private void WriteKilledBlocksToSkreen(List<string> tempLine)
+     {
+         
+         for (int i = 0; i < tempLine.Count; i++)
+         {
+             int temp = 0;
+             switch (tempLine[i])
+             {
+                 case "Red":
+                     temp = int.Parse(textRed.text);
+                     textRed.text = (temp+1).ToString();
+                     break;
+                 case "Yellow":
+                     temp = int.Parse(textYellow.text);
+                     textYellow.text = (temp+1).ToString();
+                     break;
+                 case "Green":
+                     temp = int.Parse(textGreen.text);
+                     textGreen.text = (temp+1).ToString();
+                     break;
+                 case "Cyan":
+                     temp = int.Parse(textCyan.text);
+                     textCyan.text = (temp+1).ToString();
+                     break;
+                 case "Blue":
+                     temp = int.Parse(textBlue.text);
+                     textBlue.text = (temp+1).ToString();
+                     break;
+                 case "Orange":
+                     temp = int.Parse(textOrange.text);
+                     textOrange.text = (temp+1).ToString();
+                     break;
+                 case "Purple":
+                     temp = int.Parse(textPurple.text);
+                     textPurple.text = (temp+1).ToString();
+                     break;
+             }
+         }
+     }
+
+     private  void TilesColorDetect(int row)
+     {
+         tempLine = new List<string>();
+         RectInt bounds = this.Bounds;
+         TileBase tempTile= new Tile();
+         for(int col = bounds.xMin; col < bounds.xMax; col++)
+         {
+             Vector3Int position = new Vector3Int(col, row, 0);
+             tempTile=tilemap.GetTile(position);
+             Debug.Log(tempTile.name);
+             tempLine.Add(tempTile.name);
+         }
+     }
+     
+     
+    IEnumerator DeleteRows(List<int> rows)
+    {
+        notAnimated = false;
+        yield return new WaitForSeconds(0.8f);
+        for (int i = 0; i < rows.Count; i++)
+        {
+            LineClear(rows[i]);
+            score++;//score++;
+            UpdateScore(score);
+            for(int item=0; item<rows.Count; item++)
+            {
+                rows[item]--;
+            }
+        }
+        SpawnPiece();
+        notAnimated = true;
     }
 
     public void LineClear(int row)
