@@ -15,8 +15,8 @@ public class Board : MonoBehaviour
     int random;
     public Tile testtile;
     public TMP_Text text;
-    int score = 0;
-
+    //int score = 0;
+    SaveMyGame saveMyGame = new SaveMyGame();
     public TMP_Text levelText;
     public  string levelValue = "0";
 
@@ -56,8 +56,10 @@ public class Board : MonoBehaviour
     
     private void Start()
     {
+        
+        saveMyGame.LoadGame();
         PrintLevel(levelValue);
-        UpdateScore(score);
+        UpdateScore(saveMyGame.score);//UpdateScore(score);
         SpawnPiece();
         Debug.Log("Start() ---- OK");
         
@@ -146,8 +148,8 @@ public class Board : MonoBehaviour
             if(IsLineFull(row))
             {
                 LineClear(row);
-                score++;
-                UpdateScore(score);
+                saveMyGame.score++;//score++;
+                UpdateScore(saveMyGame.score);
             }
             else {
                 row++;
@@ -223,8 +225,9 @@ public void NextClear(NextPiece piece)
     }
     void EraseScore()
     {
-        score = 0;
-        UpdateScore(score);
+        //saveMyGame.score = 0;//score = 0;
+        saveMyGame.ResetData();
+        UpdateScore(saveMyGame.score);//UpdateScore(score);
     }
     public void PrintLevel(string levelValue)
     {

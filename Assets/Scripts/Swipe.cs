@@ -10,18 +10,18 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     Vector3 startPosition;
     Vector3 endPosition;
-    private int slowMove = 35;
-    private int fastMove = 200;
-    private int frameCount = 0;
+    private int blindMoveZone = 10;
+    private int doubleMove = 100;
+    private int tripleMove = 300;
     public Board board;
     [FormerlySerializedAs("_soundManager")] public SoundManager soundManager;
     private  float swipeOrTap= 20f;
     private float delta = 0f;
     private bool isPresed;
-    private float deltaMoveX=0f;
+    private float distanceX=0f;
     private float prevPosition=0f;
     //private float prevDeltaMove = 0f;
-    float distanceX = 0f;
+    //float distanceX = 0f;
     float distanceY = 0f;
 
     [FormerlySerializedAs("_coroutinesManager")] [SerializeField] CoroutinesManager coroutinesManager;
@@ -37,59 +37,41 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         isPresed = true;
         startPosition = eventData.position;
-        // Debug.Log("pointer is NOT moving1");
-        // Debug.Log(pointerEvent.IsPointerMoving());
-        // while (pointerEvent.IsPointerMoving())
-        // {
-        //     
-        // }
-        Debug.Log("pointer is NOT moving2");
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        prevPosition = 0;
+        //prevPosition = 0;
         endPosition = eventData.position;
         CalculateDistance();
         if (delta <= swipeOrTap) //tap
         {
             Tapping();
         }
-        else
+        else if (Mathf.Abs(distanceX)>Mathf.Abs(distanceY))
+        {
+            SwipingLeftRight();
+        }
+        else if (Mathf.Abs(distanceX)<=Mathf.Abs(distanceY))
         {
             SwipingUpDown();
         }
         isPresed = false;
     }
     
-    private void Update()
+    /*private void Update()
     {
         if (isPresed)
         {
-
-            if (prevPosition != 0)
-            {
-                frameCount ++;
+            frameCount ++;
                 if (frameCount==11)
                 {
                     frameCount = 0;
                 }
-                deltaMoveX = Time.deltaTime*(Input.mousePosition.x - prevPosition)*1000;
-                board.PrintLevel(deltaMoveX.ToString());
-                if (Mathf.Abs(deltaMoveX) > 35)
-                {
-                    SwipingLeftRight();
-                }
-                
-            }
-            else
-            {
-                prevPosition = Input.mousePosition.x;
-            }
+
         }
     }
-
-    
+*/
     private void CalculateDistance()
     {
         delta = (startPosition-endPosition).magnitude;
@@ -105,45 +87,79 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void SwipingLeftRight()
     {
-        if ((deltaMoveX > fastMove)&&(frameCount%2==0))
+        if ((distanceX > tripleMove)/*&&(frameCount%2==0)*/)
         {
-            coroutinesManager.StartAppearingCoroutine(Arrow.right);
+            coroutinesManager.StartAppearingCoroutine(Arrow.left);
             board.Clear(board.activePiece);
-            board.activePiece.Move(Vector2Int.right);
+            board.activePiece.Move(Vector2Int.left);
+            board.Set(board.activePiece);
+            board.Clear(board.activePiece);
+            board.activePiece.Move(Vector2Int.left);
+            board.Set(board.activePiece);
+            board.Clear(board.activePiece);
+            board.activePiece.Move(Vector2Int.left);
             board.Set(board.activePiece);
         }
-        if ((deltaMoveX < -fastMove)&&(frameCount%2==0))
+        
+        else if (distanceX < -tripleMove)
         { 
+            coroutinesManager.StartAppearingCoroutine(Arrow.right);
+            board.Clear(board.activePiece);
+            board.activePiece.Move(Vector2Int.right);
+            board.Set(board.activePiece);
+            board.Clear(board.activePiece);
+            board.activePiece.Move(Vector2Int.right);
+            board.Set(board.activePiece);
+            board.Clear(board.activePiece);
+            board.activePiece.Move(Vector2Int.right);
+            board.Set(board.activePiece);
+        }
+        
+        else if (distanceX > doubleMove)
+        {
             coroutinesManager.StartAppearingCoroutine(Arrow.left);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.left);
             board.Set(board.activePiece);
-           
+            board.Clear(board.activePiece);
+            board.activePiece.Move(Vector2Int.left);
+            board.Set(board.activePiece);
         }
-        if ((deltaMoveX > slowMove)&&(deltaMoveX < fastMove)&&(frameCount==1))
+        
+        else if (distanceX < -doubleMove)
+        { 
+            coroutinesManager.StartAppearingCoroutine(Arrow.right);
+            board.Clear(board.activePiece);
+            board.activePiece.Move(Vector2Int.right);
+            board.Set(board.activePiece);
+            board.Clear(board.activePiece);
+            board.activePiece.Move(Vector2Int.right);
+            board.Set(board.activePiece);
+        }
+        
+        else if ((distanceX > blindMoveZone)&&(distanceX < doubleMove)/*&&(frameCount==1)*/)
+        {
+            coroutinesManager.StartAppearingCoroutine(Arrow.left);
+            board.Clear(board.activePiece);
+            board.activePiece.Move(Vector2Int.left);
+            board.Set(board.activePiece);
+        }
+        
+        else if ((distanceX < -blindMoveZone)&&(distanceX > -doubleMove)/*&&(frameCount==1)*/)
         {
             coroutinesManager.StartAppearingCoroutine(Arrow.right);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.right);
             board.Set(board.activePiece);
-        }
-        if ((deltaMoveX < -slowMove)&&(deltaMoveX > -fastMove)&&(frameCount==1))
-        {
-            coroutinesManager.StartAppearingCoroutine(Arrow.left);
-            board.Clear(board.activePiece);
-            board.activePiece.Move(Vector2Int.left);
-            board.Set(board.activePiece);
-            
         }
         soundManager.PlaySound("move");
-        deltaMoveX = 0f;
-        //board.PrintLevel(deltaMoveX.ToString());
-        prevPosition = 0f;
-        
-            
+        distanceX = 0f;
+
+
     }
     private void SwipingUpDown()
     {
+        Debug.Log("distanceY= "+distanceY);
         if (distanceY > 150)
         {
             coroutinesManager.StartAppearingCoroutine(Arrow.down);
@@ -160,6 +176,8 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             soundManager.PlaySound("rotate");
 
         }
+
+        distanceY = 0f;
     }
     
 

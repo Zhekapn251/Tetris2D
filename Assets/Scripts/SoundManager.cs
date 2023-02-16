@@ -22,12 +22,10 @@ public class SoundManager : MonoBehaviour
             if(audioClip=="rotate")
             {
                 au.PlayOneShot(pieceRotateSound);
-                Debug.Log("SoundIsPlaying");
             }
             if(audioClip=="move")
             {
                 au.PlayOneShot(pieceMoveSound);
-                Debug.Log("Sound2IsPlaying");
             }
         }
 
