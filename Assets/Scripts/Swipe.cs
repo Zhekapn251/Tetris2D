@@ -20,6 +20,8 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private bool isPresed;
     private float distanceX=0f;
     private float prevPosition=0f;
+
+    //[SerializeField] Bullet bullet;
     //private float prevDeltaMove = 0f;
     //float distanceX = 0f;
     float distanceY = 0f;
@@ -69,15 +71,15 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (board.activePiece.data.tetromino == Tetromino.M)
         {
             //Piece.PiuPiu();
-            StartCoroutine("PiuPiu");
+            board.activePiece.PiuPiu();
             //board.activePiece.PiuPiu();
-            soundManager.PlaySound(Sounds.Fire);
+            
         }
         else
         {
             board.Clear(board.activePiece);
             board.activePiece.HardDrop();
-            soundManager.PlaySound(Sounds.Drop);
+            //soundManager.PlaySound(Sounds.Drop);
             board.Set(board.activePiece);
         }
     }

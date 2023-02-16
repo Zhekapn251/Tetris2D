@@ -6,86 +6,110 @@ using UnityEngine.UI;
 public class SoundSettings : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] Image grayImageMusicButton;
-    [SerializeField] private Image orangeImageMusicButton;
-    [SerializeField] private Slider musicSlider;
+    
+    
     private bool musicIsEnabled;
     private float musicVolume;
-    [SerializeField] Image grayImageSoundsButton;
-    [SerializeField] private Image orangeImageSoundsButton;
-    [SerializeField] private Slider soundsSlider;
     private bool soundsIsEnabled;
     private float soundsVolume;
-
+    [SerializeField] private Image grayImageMusicButton;
+    [SerializeField] private Image orangeImageMusicButton;
+    [SerializeField] private Image grayImageSoundsButton;
+    [SerializeField] private Image orangeImageSoundsButton;
+    [SerializeField] public Slider soundsSlider;
+    [SerializeField] public Slider musicSlider;
+    [SerializeField] private SoundManager _soundManager;
+    [SerializeField] private MusicManager _musicManager;
+    [SerializeField] private Button soundsBtn;
+    [SerializeField] private Button musicBtn;
+    [SerializeField] private Button exitBtn;
     private void Start()
     {
-        if (orangeImageMusicButton.color.a < 0.5f)
-        {
-            musicIsEnabled = false;
-        }
-        else
-        {
-            musicIsEnabled = true;
-        }
-        
-        if (orangeImageSoundsButton.color.a < 0.5f)
-        {
-            soundsIsEnabled = false;
-        }
-        else
-        {
-            soundsIsEnabled = true;
-        }
+        soundsBtn.onClick.AddListener(SoundsButtonCliked);
+        musicBtn.onClick.AddListener(MusicButtonCliked);
+        exitBtn.onClick.AddListener(SoundsMenuOff);
+        soundsSlider.onValueChanged.AddListener(SoundsSlider);
+        musicSlider.onValueChanged.AddListener(MusicSlider);
+        AudioInit();
     }
 
+    public void SoundsMenuOn()
+    {
+        gameObject.SetActive(true);
+    }
+
+    private void SoundsMenuOff()
+    {
+        gameObject.SetActive(false);
+    }
+    private void AudioInit()
+    {
+        soundsIsEnabled = _soundManager.SoundsOn;
+        musicIsEnabled = _musicManager.MusicOn;
+        musicSlider.value = _musicManager.MusicVolume;
+        soundsSlider.value = _soundManager.SoundsVolume;
+        AudioUIInit();
+    }
+    private void AudioUIInit()
+    {
+        if (!musicIsEnabled) OffAnimation(grayImageMusicButton, orangeImageMusicButton, 0f);
+        if (!soundsIsEnabled) OffAnimation(grayImageSoundsButton, orangeImageSoundsButton, 0f);
+    }
     private void OnAnimation(Image bottom, Image top)
     {
-        Debug.Log("start animation on");
         bottom.transform.DOMoveX(bottom.transform.position.x + 70, 0.3f);
         top.DOFade(1, 0.3f);
     }
-
-    private void OffAnimation(Image bottom, Image top)
+    
+    private void OffAnimation(Image bottom, Image top, float fadeSpeed = 0.3f)
     {
-        Debug.Log("start animation off");
-        bottom.transform.DOMoveX(bottom.transform.position.x - 70, 0.3f);
+        bottom.transform.DOMoveX(bottom.transform.position.x - 70, fadeSpeed);
         top.DOFade(0, 0.3f);
     }
-    
-    public void MusicSlider()
+
+    private void MusicSlider(float sliderValue)
     {
-        musicVolume = musicSlider.value;
+        musicVolume = sliderValue;
+        _musicManager.SetVolume(musicVolume);
     }
-    public void SoundsSlider()
+
+    private void SoundsSlider(float sliderValue)
     {
-        soundsVolume = soundsSlider.value;
+        soundsVolume = sliderValue;
+        _soundManager.SetVolume(soundsVolume);
     }
     
-    public void MusicButton()
+    public void MusicButtonCliked()
     {
         if (musicIsEnabled)
         {
             OffAnimation(grayImageMusicButton,orangeImageMusicButton);
             musicIsEnabled = false;
+            _musicManager.musicAudioSourse.mute = true;
         }
         else
         {
             OnAnimation(grayImageMusicButton,orangeImageMusicButton);
             musicIsEnabled = true;
+            _musicManager.musicAudioSourse.mute = false;
         }
+        _musicManager.ChangeButtonState(musicIsEnabled);
     }
     
-    public void SoundsButton()  
+    public void SoundsButtonCliked()  
     {
         if (soundsIsEnabled)
         {
             OffAnimation(grayImageSoundsButton,orangeImageSoundsButton);
             soundsIsEnabled = false;
+            _soundManager.soundsAudioSourse.mute = true;
         }
         else
         {
             OnAnimation(grayImageSoundsButton,orangeImageSoundsButton);
             soundsIsEnabled = true;
+            _soundManager.soundsAudioSourse.mute = false;
         }
+        _soundManager.ChangeButtonState(soundsIsEnabled);
     }
 }

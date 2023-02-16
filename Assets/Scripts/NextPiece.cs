@@ -26,7 +26,7 @@ public class NextPiece : MonoBehaviour
         }
         for (int i = 0; i < board.nextPieceStartRotation; i++)
         {
-            //Rotate(1);
+            Rotate(1);
         }
     }
     

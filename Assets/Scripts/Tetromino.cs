@@ -10,6 +10,7 @@ public enum Tetromino
         S,
         Z,
         M,
+        G,
 
     }
 
@@ -22,8 +23,11 @@ public struct TetrominoData
     public Vector2Int[,] wallKicks{get; set;}
     public void Initialize()
     {
-        this.cells = Data.Cells[this.tetromino];
-        this.wallKicks = Data.WallKicks[this.tetromino];
+        if (tetromino != Tetromino.G)
+        {
+            this.cells = Data.Cells[this.tetromino];
+            this.wallKicks = Data.WallKicks[this.tetromino];
+        }
     }
 }
 

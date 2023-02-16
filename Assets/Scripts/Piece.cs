@@ -6,66 +6,65 @@ using Random=UnityEngine.Random;
 
 public class Piece : MonoBehaviour
 {
-    public Board board{get; private set;}
+    public Board board;
     public TetrominoData data{get; private set;}
     public Vector3Int position{get; private set;}
     public Vector3Int[] cells{get; private set;}
-    public int rotationIndex{get; private set;}
-    [SerializeField] Bullet bullet;
-    public float stepDelay = 1f;
+    public int rotationIndex{get; set;}
+    //[SerializeField] Bullet bullet;
+    
     public float moveDelay = 0.1f;
     public float lockDelay = 0.5f;
     [SerializeField] private CoroutinesManager _coroutinesManager;
     [SerializeField] private SoundManager _soundManager;
+    [SerializeField] private PoolOfBullets PoolOfBullets;
     private float stepTime;
-    //private float moveTime;   
-    private float lockTime;   
 
+    
+    //private float moveTime;   
+    private float lockTime;
+    private bool isFireing = false;
     public void Initialize(Board board, Vector3Int position, TetrominoData data)
     {
         this.board = board;
         this.position = position;
         this.data = data;
         rotationIndex = 0;
-        stepTime = Time.time + stepDelay;
+        stepTime = Time.time + board.stepSpeed;
         //moveTime = Time.time + moveDelay;
         lockTime = 0f;
-        
-        
-        //if (this.cells ==null)
-        //{
-            this.cells = new Vector3Int[data.cells.Length];
-        //}
+
+        cells = new Vector3Int[data.cells.Length];
         for(int i=0; i<data.cells.Length; i++)
         {
-            this.cells[i] = (Vector3Int)data.cells[i];
+            cells[i] = (Vector3Int)data.cells[i];
         }
-        
-        for (int i=0; i<board.activePieceRotation; i++)
-        {            
-            //Rotate(1);//board.startRotation
+        for (int i = 0; i < board.activePieceRotation; i++)
+        {
+            Rotate(1);
         }
     }
-    
-    
+
+    private void Start()
+    {
+        //board = GetComponent<Board>();
+    }
+
     private void Update()
     {
-       
-        this.board.Clear(this);
-        
-        
-
-         // We use a timer to allow the player to make adjustments to the piece
-        // before it locks in place
+        board.Clear(this);
+ 
         lockTime += Time.deltaTime;
         if(Input.GetKeyDown(KeyCode.Q))   ///rotation ccw
         {
             _coroutinesManager.StartAppearingCoroutine(Arrow.rotate);
+            _soundManager.PlaySound(Sounds.Rotate);
             Rotate(-1);
         }
         else if (Input.GetKeyDown(KeyCode.E)||Input.GetKeyDown(KeyCode.UpArrow))   //rotation cw
         {
             _coroutinesManager.StartAppearingCoroutine(Arrow.rotate);
+            _soundManager.PlaySound(Sounds.Rotate);
             Rotate(+1);
             
         }
@@ -74,17 +73,20 @@ public class Piece : MonoBehaviour
         {
             _coroutinesManager.StartAppearingCoroutine(Arrow.left);
             Move( Vector2Int.left);
+            _soundManager.PlaySound(Sounds.MoveAside);
             
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))   //move right
         {
             _coroutinesManager.StartAppearingCoroutine(Arrow.right);
             Move( Vector2Int.right);
+            _soundManager.PlaySound(Sounds.MoveAside);
         }
         else if(Input.GetKeyDown(KeyCode.DownArrow))   ///move left
         {
             _coroutinesManager.StartAppearingCoroutine(Arrow.down);
             Move( Vector2Int.down);
+            _soundManager.PlaySound(Sounds.MoveDown);
         }
         if(Input.GetKeyDown(KeyCode.Space))
         {
@@ -100,32 +102,35 @@ public class Piece : MonoBehaviour
         }
 
         // Advance the piece to the next row every x seconds
-        if (Time.time > stepTime) {
-            Step();
+        if (board.allowStepping)
+        {
+            if (Time.time > stepTime)
+            {
+                Step();
+            }
+
+            this.board.Set(this);
         }
-        this.board.Set(this);        
-        
     }
     
 
     private void Step()
     {
-        stepTime = Time.time + stepDelay;
-
-        // Step down to the next row
-        Move( Vector2Int.down);
-        _soundManager.PlaySound(Sounds.MoveDown);
-
-        // Once the piece has been inactive for too long it becomes locked
-        if (lockTime >= lockDelay) {
-            _soundManager.PlaySound(Sounds.Lock);
-            Lock();
-        }
        
+            stepTime = Time.time + board.stepSpeed;
+            Move(Vector2Int.down);
+            _soundManager.PlaySound(Sounds.MoveDown);
+            
+            if (lockTime >= lockDelay)
+            {
+                Lock();
+            }
+
     }
 
     private void Lock()
     {
+        _soundManager.PlaySound(Sounds.Lock);
         if (this.data.tetromino == Tetromino.M)
         {
             board.Clear(this);
@@ -134,7 +139,6 @@ public class Piece : MonoBehaviour
         {
             board.Set(this);
         }
-
         board.NextClear(board.nextactivePiece);
         board.ClearLines();
     }
@@ -186,40 +190,44 @@ public class Piece : MonoBehaviour
                     y = Mathf.RoundToInt((cell.x * matrix[2] * direction) + (cell.y * matrix[3] * direction));
                     break;
             }
-
             cells[i] = new Vector3Int(x, y, 0);
-            
-
         }
     }
 
     public void HardDrop()
     {
-        stepTime = Time.time + stepDelay;
-            while (Move(Vector2Int.down))
+        stepTime = Time.time + board.stepSpeed;
+          
+        while (Move(Vector2Int.down))
             {
                 continue;
             }
-
-            Lock();
+        Lock();
     }
 
     IEnumerator PifPuff()
     {
-        RectInt bounds = board.Bounds;
-        int col= this.position.x;//x - col         y - row
-        int row = position.y-2;
-        while (row >= bounds.yMin)
+        if (!isFireing)
         {
-            Vector3Int position = new Vector3Int(col, row, 0);
-            if (board.tilemap.HasTile(position))
-            {   
-                bullet.FireBullet(this.position, position);
-                yield return new WaitForSeconds(0.25f);
-                board.tilemap.SetTile(position,null);
-                break;
+            RectInt bounds = board.Bounds;
+            int col= this.position.x;//x - col         y - row
+            int row = position.y-2;
+            while (row >= bounds.yMin)
+            {
+                Vector3Int position = new Vector3Int(col, row, 0);
+                if (board.tilemap.HasTile(position))
+                {
+                    isFireing = true;
+                    _soundManager.PlaySound(Sounds.Fire);
+                    Bullet bullet = PoolOfBullets.GetBullet();
+                    bullet.FireBullet(this.position, position);
+                    yield return new WaitForSeconds(0.25f);
+                    board.tilemap.SetTile(position,null);
+                    isFireing = false;
+                    break;
+                }
+                row--;
             }
-            row--;
         }
     }
 

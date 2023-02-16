@@ -1,65 +1,49 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
 {
     [SerializeField] Board board;
     [SerializeField] SaveGameManager SaveGameManager;
-    [SerializeField] GameObject soundMenu;
-    [SerializeField] private GameObject speedMenu;
-    [SerializeField] private GameObject exitDialog;
-    public void SoundsMenuOn()
+    [SerializeField] private Button soundsBtn;
+    [SerializeField] private Button speedBtn;
+    [SerializeField] private Button saveBtn;
+    [SerializeField] private Button quitBtn;
+    [SerializeField] private Button exitBtn;
+    [SerializeField] private SoundSettings _soundSettings;
+    [SerializeField] private SpeedSettings _speedSettings;
+    [SerializeField] private ExitDialog _exitDialog;
+    
+    private void Start()
     {
-        soundMenu.SetActive(true);
-    }
-    public void SoundsMenuOff()
-    {
-        soundMenu.SetActive(false);
+        soundsBtn.onClick.AddListener(_soundSettings.SoundsMenuOn);
+        speedBtn.onClick.AddListener(_speedSettings.SpeedMenuOn);
+        saveBtn.onClick.AddListener(SaveButtonClicked);
+        quitBtn.onClick.AddListener(ConfirmExit);
+        exitBtn.onClick.AddListener(ExitMenu);
     }
     
-    public void SpeedMenuOn()
+    private void SaveButtonClicked()
     {
-        speedMenu.SetActive(true);
-    }
-    public void SpeedMenuOff()
-    {
-        speedMenu.SetActive(false);
-    }
-    
-    public void SaveButtonClicked()
-    {
-        SaveGame();
+        SaveGameManager.SaveGame();
     }
 
-    public void ConfirmExit()
+    private void ConfirmExit()
     {
-        exitDialog.SetActive(true);
+        _exitDialog.gameObject.SetActive(true);
     }
 
-    public void CancelingExit()
+    private void ExitMenu()
     {
-        exitDialog.SetActive(false);
-    }
-
-    public void ConfirmingExit()
-    {
-        ExitGame();
-    }
-    void SaveGame()
-    {
-        board.list.Clear();
-        board.SaveCurrentPiece();
-        board.SaveNextPiece();
-        board.SaveBoardPixels();
-        SaveGameManager.SettingsSaver();
-        Debug.Log("SaveButton Clicked");
-        //SaveGameManager.
-    }
-
-    private void ExitGame()
-    {
-        Debug.Log("App_Quit");
-        Application.Quit();
+        if (gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(false);
+            _exitDialog.CancelExit();
+            board.allowStepping = true;
+            //Time.timeScale = 1;
+        }
     }
 }

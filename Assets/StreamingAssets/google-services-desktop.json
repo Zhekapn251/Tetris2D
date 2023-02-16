@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "373600644405",
+    "project_id": "tetris-2d",
+    "storage_bucket": "tetris-2d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:373600644405:android:4fa0f7c05e5a58feef707c",
+        "android_client_info": {
+          "package_name": "com.Zhekapn251.Tetris2D"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "373600644405-57b31drc2vdfk7q1gilsceo3pk1oo32g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH67n9BUELBRT1p0Z-8ntUPreWOXqMaos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "373600644405-57b31drc2vdfk7q1gilsceo3pk1oo32g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

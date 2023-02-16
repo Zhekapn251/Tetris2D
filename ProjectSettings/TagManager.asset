@@ -10,6 +10,7 @@ TagManager:
   - RightArrow
   - DownArrow
   - RotateArrow
+  - Fireworks
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Fireworks
   - 
   - 
   - 

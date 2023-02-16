@@ -1,0 +1,145 @@
+{
+    "m_SelectedDeviceId": "721HECT82AENM",
+    "m_SelectedPackage": {
+        "deviceId": "721HECT82AENM",
+        "name": "com.Zhekapn251.Tetris2D",
+        "processId": 10171,
+        "exited": false
+    },
+    "m_SelectedPriority": 0,
+    "m_KnownPackagesForSerialization": [
+        {
+            "deviceId": "721HECT82AENM",
+            "name": "com.android.settings",
+            "processId": 3691,
+            "exited": true
+        },
+        {
+            "deviceId": "721HECT82AENM",
+            "name": "com.xm.csee",
+            "processId": 4861,
+            "exited": true
+        },
+        {
+            "deviceId": "721HECT82AENM",
+            "name": "com.Zhekapn251.Tetris2D",
+            "processId": 19633,
+            "exited": true
+        },
+        {
+            "deviceId": "721HECT82AENM",
+            "name": "com.Zhekapn251.Tetris2D",
+            "processId": 27396,
+            "exited": true
+        },
+        {
+            "deviceId": "721HECT82AENM",
+            "name": "com.Zhekapn251.Tetris2D",
+            "processId": 10171,
+            "exited": false
+        },
+        {
+            "deviceId": "QGPFORMBSKQOJJ55",
+            "name": "com.miui.home",
+            "processId": 2105,
+            "exited": false
+        },
+        {
+            "deviceId": "QGPFORMBSKQOJJ55",
+            "name": "com.Zhekapn251.Tetris2D",
+            "processId": 32437,
+            "exited": true
+        },
+        {
+            "deviceId": "QGPFORMBSKQOJJ55",
+            "name": "com.Zhekapn251.Tetris2D",
+            "processId": 1765,
+            "exited": true
+        },
+        {
+            "deviceId": "QGPFORMBSKQOJJ55",
+            "name": "com.Zhekapn251.Tetris2D",
+            "processId": 5370,
+            "exited": true
+        },
+        {
+            "deviceId": "QGPFORMBSKQOJJ55",
+            "name": "com.Zhekapn251.Tetris2D",
+            "processId": 6948,
+            "exited": true
+        },
+        {
+            "deviceId": "QGPFORMBSKQOJJ55",
+            "name": "com.Zhekapn251.Tetris2D",
+            "processId": 7560,
+            "exited": false
+        }
+    ],
+    "m_Tags": {
+        "m_Entries": [
+            {
+                "m_Name": "Filter by all listed tags",
+                "m_Selected": false
+            },
+            {
+                "m_Name": "No Filter",
+                "m_Selected": true
+            },
+            {
+                "m_Name": "",
+                "m_Selected": false
+            },
+            {
+                "m_Name": "Tag Control...",
+                "m_Selected": false
+            },
+            {
+                "m_Name": "",
+                "m_Selected": false
+            },
+            {
+                "m_Name": "Unity",
+                "m_Selected": false
+            },
+            {
+                "m_Name": "CRASH",
+                "m_Selected": false
+            }
+        ]
+    },
+    "m_MemoryViewerState": {
+        "MemoryWindowHeight": 255.0,
+        "MemoryWindowWidth": 170.0,
+        "MemoryTypeEnabled": [
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
+        ],
+        "MemoryGroup": 2,
+        "Behavior": 1
+    },
+    "m_FilterOptions": {
+        "m_Filter": "",
+        "m_UseRegularExpressions": false,
+        "m_MatchCase": false
+    },
+    "m_SymbolPaths": [],
+    "m_CaptureVideoSettings": {
+        "TimeLimitEnabled": false,
+        "TimeLimit": 180,
+        "VideoSizeEnabled": false,
+        "VideoSizeX": 1280,
+        "VideoSizeY": 720,
+        "BitRateEnabled": false,
+        "BitRateK": 20000,
+        "DisplayIdEnabled": false,
+        "DisplayId": ""
+    }
+}

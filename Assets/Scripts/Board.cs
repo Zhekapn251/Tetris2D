@@ -7,6 +7,8 @@ using TMPro;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 using DG.Tweening;
+using UnityEngine.UI;
+
 public class Board : MonoBehaviour
 {
 
@@ -17,10 +19,12 @@ public class Board : MonoBehaviour
     public NextPiece nextactivePiece { get; private set; }
     public TetrominoData[] tetrominoes;
     public List<int> list = new List<int>();
+    [SerializeField] private SpeedSettings _speedSettings;
     [SerializeField] private SoundManager _soundManager;
+    [SerializeField] private LoseGame _loseGame;
     public Vector2Int boardSize = new Vector2Int(10, 20);
     public Vector3Int spawnPosition = new Vector3Int(-3, 8, 0);
-    public Vector3Int spawnPositionOfNextPiece = new Vector3Int(5, 7, 0);
+    public Vector3Int spawnPositionOfNextPiece = new Vector3Int(6, 7, 0);
     public int randomNextPiece=-1;
     int random;
     public TMP_Text textScore;
@@ -28,35 +32,45 @@ public class Board : MonoBehaviour
     public int score = 0;
     //SaveMyGame saveMyGame = new SaveMyGame();
     public TMP_Text textLevel;
-    public  int level = 0;
-
+    public  int level = 1;
     public int activePieceRotation;
     public int nextPieceStartRotation;
     public bool notAnimated=true;
     private List<string> tempLine;
-    public SquareGoalItem[] SquareGoalItems;
-    private int frequencyOfTetrominoMAppearance = 3;
+    private int frequencyOfTetrominoMAppearance = 2;
     private int countTetrominoM = 0;
-    [FormerlySerializedAs("LevelGenerator")] public LevelManager levelManager;
+    public LevelManager levelManager;
     private TetrominoData data;
     private TetrominoData nextPiecedata;
+    public float stepSpeed = 1f;
+    public bool allowStepping = true;
+    [SerializeField] GameOverFade _fadeGameOver;
+    
 
     private void Awake()
     {
         //swipe = GetComponent<Swipe>();
         DOTween.Init();
-        SaveGameManager.SettingLoader();
+        
+        Debug.Log("Awake() ---- OK");
+    }
+    
+    private void Start()
+    {
+        _speedSettings.SpeedSettingsInit();
         tilemap = GetComponentInChildren<Tilemap>();
-        activePiece = GetComponentInChildren<Piece>();
-        nextactivePiece = GetComponentInChildren<NextPiece>();
+        activePiece = GetComponent<Piece>();
+        nextactivePiece = GetComponent<NextPiece>();
+        SaveGameManager.LoadPlayerData();
         
-        
+
+
         for (int i=0; i<tetrominoes.Length; i++)
         {
             tetrominoes[i].Initialize();
         }
         
-        if (SaveGameManager.isSaved())
+        if (SaveGameManager.isSaved)
         {
             StartGameRoutinesWithSaving();
         }
@@ -65,25 +79,54 @@ public class Board : MonoBehaviour
             StartGameRoutinesWithoutSaving();
         }
         
-        Debug.Log("Awake() ---- OK");
-    }
-    
-    private void Start()
-    {
-        
-        
         Debug.Log("Start() ---- OK");
-
-
     }
-    
-    private void StartGameRoutinesWithSaving()
+
+    public float CalculateNumberOfStars()
     {
-        activePieceRotation = SaveGameManager.SaveDataStorage.activePieceRotation;
-        nextPieceStartRotation = SaveGameManager.SaveDataStorage.nextPieceRotation;
-        level = SaveGameManager.SaveDataStorage.level;
-        score = SaveGameManager.SaveDataStorage.score;
-            
+        float rate;
+        int highestTileInBoard = 0;
+        RectInt bounds = Bounds;
+
+        int  row = bounds.yMax;
+        // Shift every row above down one
+        while (row > bounds.yMin && highestTileInBoard==0)
+        {
+            for (int col = bounds.xMin; col < bounds.xMax && highestTileInBoard==0; col++)
+            {
+                Vector3Int position = new Vector3Int(col, row, 0);
+                if (tilemap.HasTile(position))
+                {
+                    highestTileInBoard = position.y;
+                    Debug.Log("highest = "+highestTileInBoard);
+                }
+            }    
+            row--;
+        }
+        if (highestTileInBoard<-4)
+        {
+            rate = 1f;
+        }
+        else if (highestTileInBoard < 1)
+        {
+            rate = 0.67f;
+        }
+        else
+        {
+            rate = 0.34f;
+        }
+        Debug.Log("rate = "+ rate);
+
+        return rate;
+    }
+private void LoadGameSettings()
+    {
+        SaveGameManager.LoadData();
+    }
+
+    public void StartGameRoutinesWithSaving()
+    {
+        LoadGameSettings();
         activePiece.Initialize(this, new Vector3Int(SaveGameManager.SaveDataStorage.list[1],
             SaveGameManager.SaveDataStorage.list[2],0), tetrominoes[SaveGameManager.SaveDataStorage.list[0]]);
             
@@ -95,15 +138,22 @@ public class Board : MonoBehaviour
         Set(activePiece);
         SetNext(nextactivePiece);
         LoadTilesFromSaveSpot();
+        
+        allowStepping = true;
         PrintLevel(level);
         UpdateScore(score);
     }
     
-    private void StartGameRoutinesWithoutSaving()
+    public void StartGameRoutinesWithoutSaving()
     {
+        //Clear(activePiece);
+        tilemap.ClearAllTiles();
         StartLevelGeneration();
         activePieceRotation = UnityEngine.Random.Range(0, 4);
         nextPieceStartRotation = UnityEngine.Random.Range(0, 4);
+        allowStepping = true;
+        PrintLevel(level);
+        UpdateScore(score);
         SpawnPiece();
     }
 
@@ -150,23 +200,10 @@ public class Board : MonoBehaviour
     {
         if(randomNextPiece == -1)
         {
-            random = Random.Range(0,this.tetrominoes.Length);
+            random = Random.Range(0,this.tetrominoes.Length-1);
         }
         GenerateActivePieceAndNextPiece();
-       //*******************************************************************************
-        if (nextPiecedata.tetromino == Tetromino.M)
-        {
-            Debug.Log("<color=red>regular spawn</color>");
-            Debug.Log(nextPiecedata.tetromino);
-        }
-        else
-        {
-            {
-                Debug.Log("regular spawn");
-                Debug.Log(nextPiecedata.tetromino);
-            }
-        }
-        //*******************************************************************************
+       
         if (nextPiecedata.tetromino == Tetromino.M)
         {
             countTetrominoM++;
@@ -178,8 +215,6 @@ public class Board : MonoBehaviour
             if (countTetrominoM < frequencyOfTetrominoMAppearance)
             {
                 GenerateActivePieceAndNextPiece(true);
-                Debug.Log("notregular spawn");
-                Debug.Log(nextPiecedata.tetromino);
             }
         }
         data = tetrominoes[random];
@@ -195,7 +230,19 @@ public class Board : MonoBehaviour
         }
         
         activePiece.Initialize(this, spawnPosition, data);
-        nextactivePiece.Initialize(this, this.spawnPositionOfNextPiece,  nextPiecedata);
+        Vector3Int correctedspawnPositionOfNextPiece = spawnPositionOfNextPiece;
+        if (nextPiecedata.tetromino == Tetromino.I && nextPieceStartRotation % 2 == 0)
+        {
+            correctedspawnPositionOfNextPiece = spawnPositionOfNextPiece+Vector3Int.left;
+        }
+        if (nextPiecedata.tetromino == Tetromino.M)
+        {
+            correctedspawnPositionOfNextPiece = spawnPositionOfNextPiece+Vector3Int.up;
+        }
+        
+        
+
+        nextactivePiece.Initialize(this, correctedspawnPositionOfNextPiece,  nextPiecedata);
         
         if (IsValidPOsition(this.activePiece, activePiece.position))
         {
@@ -205,7 +252,7 @@ public class Board : MonoBehaviour
         else{
              
             GameOver();
-            _soundManager.PlaySound(Sounds.Lose);
+            
             EraseScore();
         }
     }
@@ -215,22 +262,34 @@ public class Board : MonoBehaviour
 
         int tetrominoM = generateWithoutTetrominoM ? 1 : 0;
         
-        randomNextPiece = Random.Range(0, tetrominoes.Length-tetrominoM);
+        randomNextPiece = Random.Range(0, tetrominoes.Length-1-tetrominoM);//
         nextPiecedata = tetrominoes[randomNextPiece];
         
     }
 
     private void GameOver()
      {
-        this.tilemap.ClearAllTiles();
+         
+         _soundManager.PlaySound(Sounds.Lose);
+         //this.tilemap.ClearAllTiles();
+         //_loseGame.ShowLoseGame();
+         allowStepping = false;
+         GameOverSequence();
+         
      }
 
+    public void GameOverSequence()
+    {
+        _fadeGameOver.LooseFade();
+    }
+
+    
     public void Set(Piece piece)
     {
         for (int i=0; i<piece.cells.Length; i++)
         {
             Vector3Int tilePosition = piece.cells[i]+piece.position;
-            this.tilemap.SetTile(tilePosition, piece.data.tile);
+            tilemap.SetTile(tilePosition, piece.data.tile);
         }
     }
 
@@ -239,7 +298,7 @@ public class Board : MonoBehaviour
         for (int i=0; i<piece.cells.Length; i++)
         {
             Vector3Int tilePosition = piece.cells[i]+piece.position;
-            this.tilemap.SetTile(tilePosition, null);
+            tilemap.SetTile(tilePosition, null);
         }
     }
 
@@ -249,7 +308,7 @@ public class Board : MonoBehaviour
         for( int i=0; i<piece.cells.Length;i++)
         {
             Vector3Int tilePosition = piece.cells[i]+position;
-            if(this.tilemap.HasTile(tilePosition))
+            if(tilemap.HasTile(tilePosition))
             {
                 return false;
             }
@@ -299,9 +358,8 @@ public class Board : MonoBehaviour
             {
                 fullRowsDelete.Add(row);
                 TilesColorDetect(row);
-                //WriteKilledBlocksToScreen(tempLine);
+                Debug.Log("+line");
                 levelManager.UpdateGoalsLines();
-                levelManager.UpdateGoalsValues(tempLine);
             }
             row++;
         }
@@ -325,46 +383,6 @@ public class Board : MonoBehaviour
         return false;
     }
 
-    /* private void WriteKilledBlocksToScreen(List<string> tempLine)
-     {
-         
-         for (int i = 0; i < tempLine.Count; i++)
-         {
-             int temp = 0;
-             switch (tempLine[i])
-             {
-                 case "Red":
-                     temp = int.Parse(textRed.text);
-                     textRed.text = (temp+1).ToString();
-                     break;
-                 case "Yellow":
-                     temp = int.Parse(textYellow.text);
-                     textYellow.text = (temp+1).ToString();
-                     break;
-                 case "Green":
-                     temp = int.Parse(textGreen.text);
-                     textGreen.text = (temp+1).ToString();
-                     break;
-                 case "Cyan":
-                     temp = int.Parse(textCyan.text);
-                     textCyan.text = (temp+1).ToString();
-                     break;
-                 case "Blue":
-                     temp = int.Parse(textBlue.text);
-                     textBlue.text = (temp+1).ToString();
-                     break;
-                 case "Orange":
-                     temp = int.Parse(textOrange.text);
-                     textOrange.text = (temp+1).ToString();
-                     break;
-                 case "Purple":
-                     temp = int.Parse(textPurple.text);
-                     textPurple.text = (temp+1).ToString();
-                     break;
-             }
-         }
-     }
-*/
      private  void TilesColorDetect(int row)
      {
          tempLine = new List<string>();
@@ -500,7 +518,7 @@ public class Board : MonoBehaviour
     
     public void PrintLevel(int levelValue)
     {
-        textLevel.text = "Level : "+ levelValue.ToString();
+        textLevel.text = levelValue.ToString();
     }
     
     void EraseScore()
