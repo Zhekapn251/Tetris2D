@@ -6,6 +6,10 @@ TagManager:
   tags:
   - NextPieceTilemap
   - NextPieceObj
+  - LeftArrow
+  - RightArrow
+  - DownArrow
+  - RotateArrow
   layers:
   - Default
   - TransparentFX

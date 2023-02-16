@@ -15,7 +15,7 @@ public class Piece : MonoBehaviour
     public float stepDelay = 1f;
     public float moveDelay = 0.1f;
     public float lockDelay = 0.5f;
-
+    [SerializeField] private CoroutinesManager _coroutinesManager;
     private float stepTime;
     private float moveTime;
     private float lockTime;
@@ -60,23 +60,29 @@ public class Piece : MonoBehaviour
         lockTime += Time.deltaTime;
         if(Input.GetKeyDown(KeyCode.Q))   ///rotation ccw
         {
+            _coroutinesManager.StartAppearingCoroutine(Arrow.rotate);
             Rotate(-1);
         }
         else if (Input.GetKeyDown(KeyCode.E)||Input.GetKeyDown(KeyCode.UpArrow))   //rotation cw
         {
+            _coroutinesManager.StartAppearingCoroutine(Arrow.rotate);
             Rotate(+1);
         }
 
         if(Input.GetKeyDown(KeyCode.LeftArrow))   ///move left
         {
+            _coroutinesManager.StartAppearingCoroutine(Arrow.left);
             Move( Vector2Int.left);
+            
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))   //move right
         {
+            _coroutinesManager.StartAppearingCoroutine(Arrow.right);
             Move( Vector2Int.right);
         }
         else if(Input.GetKeyDown(KeyCode.DownArrow))   ///move left
         {
+            _coroutinesManager.StartAppearingCoroutine(Arrow.down);
             Move( Vector2Int.down);
         }
         if(Input.GetKeyDown(KeyCode.Space))

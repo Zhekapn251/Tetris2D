@@ -1,7 +1,9 @@
 
 
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 
 public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
@@ -12,18 +14,25 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private int fastMove = 200;
     private int frameCount = 0;
     public Board board;
-    public SoundManager _soundManager;
+    [FormerlySerializedAs("_soundManager")] public SoundManager soundManager;
     private  float swipeOrTap= 20f;
     private float delta = 0f;
     private bool isPresed;
     private float deltaMoveX=0f;
     private float prevPosition=0f;
-    private float prevDeltaMove = 0f;
+    //private float prevDeltaMove = 0f;
     float distanceX = 0f;
     float distanceY = 0f;
+
+    [FormerlySerializedAs("_coroutinesManager")] [SerializeField] CoroutinesManager coroutinesManager;
     //private PointerEventData pointerEvent = new PointerEventData(EventSystem.current);
-    
-    
+
+    private void Start()
+    {
+      //  _coroutinesManager = GetComponent<CoroutinesManager>();
+    }
+
+
     public void OnPointerDown(PointerEventData eventData)
     {
         isPresed = true;
@@ -98,29 +107,35 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if ((deltaMoveX > fastMove)&&(frameCount%2==0))
         {
+            coroutinesManager.StartAppearingCoroutine(Arrow.right);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.right);
             board.Set(board.activePiece);
         }
         if ((deltaMoveX < -fastMove)&&(frameCount%2==0))
-        {
+        { 
+            coroutinesManager.StartAppearingCoroutine(Arrow.left);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.left);
             board.Set(board.activePiece);
+           
         }
         if ((deltaMoveX > slowMove)&&(deltaMoveX < fastMove)&&(frameCount==1))
         {
+            coroutinesManager.StartAppearingCoroutine(Arrow.right);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.right);
             board.Set(board.activePiece);
         }
         if ((deltaMoveX < -slowMove)&&(deltaMoveX > -fastMove)&&(frameCount==1))
         {
+            coroutinesManager.StartAppearingCoroutine(Arrow.left);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.left);
             board.Set(board.activePiece);
+            
         }
-        _soundManager.PlaySound("move");
+        soundManager.PlaySound("move");
         deltaMoveX = 0f;
         //board.PrintLevel(deltaMoveX.ToString());
         prevPosition = 0f;
@@ -131,16 +146,18 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (distanceY > 150)
         {
+            coroutinesManager.StartAppearingCoroutine(Arrow.down);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.down);
             board.Set(board.activePiece);
         }
         else if (distanceY < -150)
         {
+            coroutinesManager.StartAppearingCoroutine(Arrow.rotate);
             board.Clear(board.activePiece);
             board.activePiece.Rotate(1);
             board.Set(board.activePiece);
-            _soundManager.PlaySound("rotate");
+            soundManager.PlaySound("rotate");
 
         }
     }
