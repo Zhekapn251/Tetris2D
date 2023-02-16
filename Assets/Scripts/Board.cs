@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 using TMPro;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
-
+using DG.Tweening;
 public class Board : MonoBehaviour
 {
 
@@ -23,10 +23,11 @@ public class Board : MonoBehaviour
     public Vector3Int spawnPositionOfNextPiece = new Vector3Int(5, 7, 0);
     public int randomNextPiece=-1;
     int random;
-    public TMP_Text text;
+    public TMP_Text textScore;
+    
     public int score = 0;
     //SaveMyGame saveMyGame = new SaveMyGame();
-    public TMP_Text levelText;
+    public TMP_Text textLevel;
     public  int level = 0;
 
     public int activePieceRotation;
@@ -34,22 +35,16 @@ public class Board : MonoBehaviour
     public bool notAnimated=true;
     private List<string> tempLine;
     public SquareGoalItem[] SquareGoalItems;
-    //public TMP_Text textBlue;
-    //public TMP_Text textCyan;
-    //public TMP_Text textGreen;
-    //public TMP_Text textOrange;
-    //public TMP_Text textPurple;
-    //public TMP_Text textRed;
-    //public TMP_Text textYellow;
-    //public TMP_Text textLines;
-    
+    private int frequencyOfTetrominoMAppearance = 3;
+    private int countTetrominoM = 0;
     [FormerlySerializedAs("LevelGenerator")] public LevelManager levelManager;
-
+    private TetrominoData data;
+    private TetrominoData nextPiecedata;
 
     private void Awake()
     {
         //swipe = GetComponent<Swipe>();
-        
+        DOTween.Init();
         SaveGameManager.SettingLoader();
         tilemap = GetComponentInChildren<Tilemap>();
         activePiece = GetComponentInChildren<Piece>();
@@ -157,13 +152,38 @@ public class Board : MonoBehaviour
         {
             random = Random.Range(0,this.tetrominoes.Length);
         }
+        GenerateActivePieceAndNextPiece();
+       //*******************************************************************************
+        if (nextPiecedata.tetromino == Tetromino.M)
+        {
+            Debug.Log("<color=red>regular spawn</color>");
+            Debug.Log(nextPiecedata.tetromino);
+        }
+        else
+        {
+            {
+                Debug.Log("regular spawn");
+                Debug.Log(nextPiecedata.tetromino);
+            }
+        }
+        //*******************************************************************************
+        if (nextPiecedata.tetromino == Tetromino.M)
+        {
+            countTetrominoM++;
+            if (countTetrominoM > frequencyOfTetrominoMAppearance)
+            {
+                countTetrominoM = 0;
+            }
 
-        randomNextPiece = Random.Range(0, tetrominoes.Length);//this.
-        TetrominoData data = this.tetrominoes[random];//[7];
-        TetrominoData nextPiecedata = this.tetrominoes[randomNextPiece];//[7];
-
+            if (countTetrominoM < frequencyOfTetrominoMAppearance)
+            {
+                GenerateActivePieceAndNextPiece(true);
+                Debug.Log("notregular spawn");
+                Debug.Log(nextPiecedata.tetromino);
+            }
+        }
+        data = tetrominoes[random];
         random=randomNextPiece;
-
         activePieceRotation = nextPieceStartRotation;
         if (nextPiecedata.tetromino == Tetromino.M)
         {
@@ -188,6 +208,16 @@ public class Board : MonoBehaviour
             _soundManager.PlaySound(Sounds.Lose);
             EraseScore();
         }
+    }
+    
+    private void GenerateActivePieceAndNextPiece(bool generateWithoutTetrominoM=false)
+    {
+
+        int tetrominoM = generateWithoutTetrominoM ? 1 : 0;
+        
+        randomNextPiece = Random.Range(0, tetrominoes.Length-tetrominoM);
+        nextPiecedata = tetrominoes[randomNextPiece];
+        
     }
 
     private void GameOver()
@@ -352,7 +382,7 @@ public class Board : MonoBehaviour
     IEnumerator DeleteRows(List<int> rows)
     {
         notAnimated = false;
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(0.3f);
         for (int i = 0; i < rows.Count; i++)
         {
             LineClear(rows[i]);
@@ -465,7 +495,12 @@ public class Board : MonoBehaviour
 
     void UpdateScore(int score)
     {
-       text.text = "Score: " + score.ToString();
+       textScore.text = "Score: " + score.ToString();
+    }
+    
+    public void PrintLevel(int levelValue)
+    {
+        textLevel.text = "Level : "+ levelValue.ToString();
     }
     
     void EraseScore()
@@ -475,11 +510,7 @@ public class Board : MonoBehaviour
         UpdateScore(score);//UpdateScore(score);
     }
     
-    public void PrintLevel(int levelValue)
-    {
-        //levelText.text = "Level : "+ levelValue.ToString();
-        levelText.text = levelValue.ToString();
-    }
+    
 
     public void GenerateObstacle()
     {

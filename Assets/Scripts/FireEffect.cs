@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class FireEffect : MonoBehaviour
 {
-    [SerializeField] private ParticleSystem rightEffect;
-    [SerializeField] private ParticleSystem leftEffect;
+    [SerializeField] private List<ParticleSystem> effects;
+    
 
     private FireEffectPool FireEffectPool;
 
@@ -15,8 +15,10 @@ public class FireEffect : MonoBehaviour
     }
     public void EnableEffects()
     {
-        rightEffect.Play();
-        leftEffect.Play();
+        foreach (var item in effects)
+        {
+            item.Play();
+        }
         Invoke("ReturnToPool",1.5f);
     }
 

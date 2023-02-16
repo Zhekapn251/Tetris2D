@@ -11,24 +11,24 @@ public class Piece : MonoBehaviour
     public Vector3Int position{get; private set;}
     public Vector3Int[] cells{get; private set;}
     public int rotationIndex{get; private set;}
-
+    [SerializeField] Bullet bullet;
     public float stepDelay = 1f;
     public float moveDelay = 0.1f;
     public float lockDelay = 0.5f;
     [SerializeField] private CoroutinesManager _coroutinesManager;
     [SerializeField] private SoundManager _soundManager;
     private float stepTime;
-    private float moveTime;
-    private float lockTime;
+    //private float moveTime;   
+    private float lockTime;   
 
     public void Initialize(Board board, Vector3Int position, TetrominoData data)
     {
         this.board = board;
         this.position = position;
         this.data = data;
-        this.rotationIndex = 0;//Random.Range(0, 4);//UnityEngine.Random.Range(0, 4);//0;454454545545
+        rotationIndex = 0;
         stepTime = Time.time + stepDelay;
-        moveTime = Time.time + moveDelay;
+        //moveTime = Time.time + moveDelay;
         lockTime = 0f;
         
         
@@ -201,10 +201,10 @@ public class Piece : MonoBehaviour
                 continue;
             }
 
-            Lock(); 
+            Lock();
     }
 
-    public void PiuPiu()
+    IEnumerator PifPuff()
     {
         RectInt bounds = board.Bounds;
         int col= this.position.x;//x - col         y - row
@@ -213,14 +213,20 @@ public class Piece : MonoBehaviour
         {
             Vector3Int position = new Vector3Int(col, row, 0);
             if (board.tilemap.HasTile(position))
-            {
+            {   
+                bullet.FireBullet(this.position, position);
+                yield return new WaitForSeconds(0.25f);
                 board.tilemap.SetTile(position,null);
                 break;
             }
             row--;
         }
     }
-    
+
+    public void PiuPiu()
+    {
+        StartCoroutine(PifPuff());
+    }
     private bool TestWallKicks(int rotationIndex, int rotationDirection)
     {
         int wallKickIndex = GetWallKickIndex(rotationIndex, rotationDirection);
@@ -262,7 +268,7 @@ public class Piece : MonoBehaviour
         if(valid)
         {
             position = newPosition;
-            moveTime = Time.time + moveDelay;
+            //moveTime = Time.time + moveDelay;
             lockTime = 0f; // reset
         }
         return valid;

@@ -22,7 +22,10 @@ public class SoundManager : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-
+    public void SetVolume(float volume)
+    {
+        audioSource.volume = volume;
+    }
     public void PlaySound(Sounds sound)
     {
         var clip = GetAudioClip(sound);

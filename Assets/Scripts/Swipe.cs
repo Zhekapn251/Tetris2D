@@ -69,7 +69,8 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (board.activePiece.data.tetromino == Tetromino.M)
         {
             //Piece.PiuPiu();
-            board.activePiece.PiuPiu();
+            StartCoroutine("PiuPiu");
+            //board.activePiece.PiuPiu();
             soundManager.PlaySound(Sounds.Fire);
         }
         else

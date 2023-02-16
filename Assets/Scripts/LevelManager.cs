@@ -13,19 +13,28 @@ public class LevelManager : MonoBehaviour
     [SerializeField] SoundManager _soundManager;
     public Board board;
     public Dictionary<GoalsType,GoalsStructure> goalsStructures = new Dictionary<GoalsType, GoalsStructure>();
-    //public SquareGoalItem[]LevelGoals;
-    
-    
-    //private List<GoalsType> goalsTypeUsed = new List<GoalsType>();
+    private int minGoalCount = 1;
+    private int maxGoalCount = 1;
+    private int countOfGeneratedGoals = 3;
+    private int amountOfGeneratedObstacles;
     public void GoalsGenerator()
     {
-        for (int i = 0; i < 3;)
+        ChooseHardnessOfLevel(board.level);
+
+        GenerateGoalsForLevel();
+        GoalsInit();
+        GenerateObstacles(amountOfGeneratedObstacles);
+    }
+
+    private void GenerateGoalsForLevel()
+    {
+        for (int i = 0; i < countOfGeneratedGoals;)
         {
             GoalsStructure goalsStructure = new GoalsStructure();
             
             int randomGoalsStructure = Random.Range(0, Enum.GetNames(typeof(GoalsType)).Length);
             goalsStructure.GoalsType = (GoalsType)randomGoalsStructure;
-            goalsStructure.goalCount = Random.Range(5, 10);
+            goalsStructure.goalCount = Random.Range(minGoalCount, maxGoalCount);
             bool containKey = goalsStructures.ContainsKey(goalsStructure.GoalsType);
             if (!containKey)
             {
@@ -33,8 +42,34 @@ public class LevelManager : MonoBehaviour
                 i++;
             }
         }
-        GoalsInit();
-        GenerateObstacles(30);
+    }
+
+    private void ChooseHardnessOfLevel(int boardLevel)
+    {
+        if (boardLevel < 5)
+        {
+            minGoalCount = 2;
+            maxGoalCount = 5;
+            amountOfGeneratedObstacles = 0;
+        }
+        else if ( boardLevel < 10)
+        {
+            minGoalCount = 4;
+            maxGoalCount = 8;
+            amountOfGeneratedObstacles = 5;
+        }
+        else if (boardLevel < 15)
+        {
+            minGoalCount = 4;
+            maxGoalCount = 8;
+            amountOfGeneratedObstacles = 10;
+        }
+        else
+        {
+            minGoalCount = 10;
+            maxGoalCount = 15;
+            amountOfGeneratedObstacles = 15;
+        }
     }
 
     private void GenerateObstacles(int amount)
@@ -116,12 +151,13 @@ public class LevelManager : MonoBehaviour
 
     private void StartWinSequence()
     {
-        
-        board.levelText.text = "you win";
+
+        board.level++;
+        board.textLevel.text = "Level: "+board.level;
         _soundManager.PlaySound(Sounds.Win);
         goalsStructures.Clear();
-        GoalsGenerator();
         board.tilemap.ClearAllTiles();
+        GoalsGenerator();
     }
 
     private bool HasGoal(GoalsType key)
@@ -160,7 +196,7 @@ public class LevelManager : MonoBehaviour
             goalsStructures[entryKey].goalCount;
     }
 
-    public bool GoalsIsReached()
+    private bool GoalsIsReached()
     {
         bool goalIsReached = false;
         foreach (KeyValuePair<GoalsType, GoalsStructure> entry in goalsStructures)

@@ -17,7 +17,7 @@ public class MenuButtonScript : MonoBehaviour
             
         }
     }
-
+    
     public void Reload()
     {
         SceneManager.LoadScene(0);
