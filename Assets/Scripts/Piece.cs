@@ -25,7 +25,7 @@ public class Piece : MonoBehaviour
         this.board = board;
         this.position = position;
         this.data = data;
-        this.rotationIndex = 0;//Random.Range(0, 4);//UnityEngine.Random.Range(0, 4);//0;
+        this.rotationIndex = 0;//Random.Range(0, 4);//UnityEngine.Random.Range(0, 4);//0;454454545545
         stepTime = Time.time + stepDelay;
         moveTime = Time.time + moveDelay;
         lockTime = 0f;
@@ -69,15 +69,15 @@ public class Piece : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.LeftArrow))   ///move left
         {
-            Move(Vector2Int.left);
+            Move( Vector2Int.left);
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))   //move right
         {
-            Move(Vector2Int.right);
+            Move( Vector2Int.right);
         }
         else if(Input.GetKeyDown(KeyCode.DownArrow))   ///move left
         {
-            Move(Vector2Int.down);
+            Move( Vector2Int.down);
         }
         if(Input.GetKeyDown(KeyCode.Space))
         {
@@ -89,6 +89,7 @@ public class Piece : MonoBehaviour
             Step();
         }
 
+        
         this.board.Set(this);        
         
     }
@@ -99,7 +100,7 @@ public class Piece : MonoBehaviour
         stepTime = Time.time + stepDelay;
 
         // Step down to the next row
-        Move(Vector2Int.down);
+        Move( Vector2Int.down);
 
         // Once the piece has been inactive for too long it becomes locked
         if (lockTime >= lockDelay) {
@@ -116,7 +117,7 @@ public class Piece : MonoBehaviour
         board.SpawnPiece();
     }
 
-    private void Rotate(int direction)
+    public void Rotate(int direction)
     {
         // Store the current rotation in case the rotation fails
         // and we need to revert
@@ -166,9 +167,9 @@ public class Piece : MonoBehaviour
         }
     }
 
-    private void HardDrop()
+    public void HardDrop()
     {
-        while (Move(Vector2Int.down))
+        while (Move( Vector2Int.down))
         {
             continue;
         }
@@ -185,7 +186,7 @@ public class Piece : MonoBehaviour
         {
             Vector2Int translation = data.wallKicks[wallKickIndex, i];
 
-            if (Move(translation)) {
+            if (Move( translation)) {
                 return true;
             }
         }
@@ -212,7 +213,7 @@ public class Piece : MonoBehaviour
             return min + (input - min) % (max - min);
         }
     }
-    private bool Move(Vector2Int translation)        // translation -- sdvig
+    public bool Move(Vector2Int translation)        // translation -- sdvig
     {
         Vector3Int newPosition = position;
         newPosition.x +=translation.x;

@@ -9,8 +9,8 @@ public class Board : MonoBehaviour
     public NextPiece nextactivePiece { get; private set; }
     public TetrominoData[] tetrominoes;
     public Vector2Int boardSize = new Vector2Int(10, 20);
-    public Vector3Int spawnPosition = new Vector3Int(-1, 8, 0);
-    public Vector3Int spawnPositionOfNextPiece = new Vector3Int(7, 7, 0);
+    public Vector3Int spawnPosition = new Vector3Int(-3, 8, 0);
+    public Vector3Int spawnPositionOfNextPiece = new Vector3Int(5, 7, 0);
     public int randomNextPiece=-1;
     int random;
     public Tile testtile;
@@ -18,7 +18,7 @@ public class Board : MonoBehaviour
     int score = 0;
 
     public TMP_Text levelText;
-    int levelValue = 0;
+    public  string levelValue = "0";
 
     public int startRotation;
     public int nextPieceStartRotation;
@@ -30,7 +30,7 @@ public class Board : MonoBehaviour
     {
         get
         {
-           Vector2Int position = new Vector2Int(-this.boardSize.x/2,-this.boardSize.y/2);
+           Vector2Int position = new Vector2Int(-this.boardSize.x/2-2,-this.boardSize.y/2);
            return new RectInt(position, this.boardSize);
         }
     }
@@ -127,12 +127,10 @@ public class Board : MonoBehaviour
             Vector3Int tilePosition = piece.cells[i]+position;
             if(this.tilemap.HasTile(tilePosition))
             {
-                Debug.Log("has tile");
                 return false;
             }
             if(!bounds.Contains((Vector2Int)tilePosition))
             {
-                Debug.Log("bounds not conain" + tilePosition);
                 return false;
             }
         }
@@ -228,8 +226,9 @@ public void NextClear(NextPiece piece)
         score = 0;
         UpdateScore(score);
     }
-    void PrintLevel(int levelValue)
+    public void PrintLevel(string levelValue)
     {
-        levelText.text = "Level : "+ levelValue.ToString();
+        //levelText.text = "Level : "+ levelValue.ToString();
+        levelText.text = levelValue;
     }
 }
