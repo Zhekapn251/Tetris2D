@@ -29,9 +29,7 @@ public class Piece : MonoBehaviour
         stepTime = Time.time + stepDelay;
         moveTime = Time.time + moveDelay;
         lockTime = 0f;
-        string str1="rotation #";
-        string str2="";
-        string str3="init position = ";
+        
         
         if (this.cells ==null)
         {
@@ -40,36 +38,13 @@ public class Piece : MonoBehaviour
         for(int i=0; i<data.cells.Length; i++)
         {
             this.cells[i] = (Vector3Int)data.cells[i];
-            str3=str3+(cells[i]+position).ToString()+"; ";
         }
         
         for (int i=0; i<board.startRotation; i++)
         {            
-            Rotate(board.startRotation);
-            for(int j=0; j<cells.Length; j++)
-            {    
-            str1=str1+i.ToString()+(cells[j]+position).ToString()+"; ";
-            }
-            
-            //if(!board.IsValidPOsition(this,  position))
-            
-            for(int j=0; j<cells.Length; j++)
-            {
-          
-            
-            //str2=str2+"i=" + i.ToString() + ": Valid = " +  board.IsValidPOsition(this,  position).ToString()+"; ";
-              
-            }
-        
+            Rotate(1);//board.startRotation
         }
         
-        Debug.Log(board.startRotation);
-        Debug.Log(str3);
-        Debug.Log(str1); 
-        str1="rotation #";
-        //Debug.Log(str2); 
-         
-
     }
     
     
@@ -161,7 +136,6 @@ public class Piece : MonoBehaviour
     private void ApplyRotationMatrix(int direction)
     {
         float[] matrix = Data.RotationMatrix;
-        string temp="just after rotation: ";
         // Rotate all of the cells using the rotation matrix
         for (int i = 0; i < cells.Length; i++)
         {
@@ -187,11 +161,9 @@ public class Piece : MonoBehaviour
             }
 
             cells[i] = new Vector3Int(x, y, 0);
-            temp=temp+cells[i].ToString();
+            
 
         }
-        Debug.Log(temp);
-        temp = "just after rotation: ";
     }
 
     private void HardDrop()
@@ -208,18 +180,14 @@ public class Piece : MonoBehaviour
     private bool TestWallKicks(int rotationIndex, int rotationDirection)
     {
         int wallKickIndex = GetWallKickIndex(rotationIndex, rotationDirection);
-        Debug.Log("wallKickIndex= "+wallKickIndex);
         
         for (int i = 0; i < data.wallKicks.GetLength(1); i++)  //i<5
         {
             Vector2Int translation = data.wallKicks[wallKickIndex, i];
 
             if (Move(translation)) {
-                Debug.Log("wallKickIndex= "+i.ToString()+" is valid");
                 return true;
-                
             }
-            Debug.Log("wallKickIndex= "+i.ToString()+" is NOT valid");
         }
     
         return false;
@@ -247,12 +215,9 @@ public class Piece : MonoBehaviour
     private bool Move(Vector2Int translation)        // translation -- sdvig
     {
         Vector3Int newPosition = position;
-        Debug.Log("Func Move "+position);
         newPosition.x +=translation.x;
         newPosition.y+=translation.y;
-        Debug.Log("Func Move newPosition "+newPosition);
         bool valid = this.board.IsValidPOsition(this, newPosition);
-        Debug.Log("valid "+valid);
         if(valid)
         {
             position = newPosition;
