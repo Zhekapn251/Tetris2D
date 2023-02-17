@@ -23,6 +23,10 @@ public class SoundSettings : MonoBehaviour
     [SerializeField] private Button soundsBtn;
     [SerializeField] private Button musicBtn;
     [SerializeField] private Button exitBtn;
+    [SerializeField] private Transform musicBtnPositionOn;
+    [SerializeField] private Transform musicBtnPositionOff;
+    [SerializeField] private Transform soundBtnPositionOn;
+    [SerializeField] private Transform soundBtnPositionOff;
     private void Start()
     {
         soundsBtn.onClick.AddListener(SoundsButtonCliked);
@@ -52,18 +56,20 @@ public class SoundSettings : MonoBehaviour
     }
     private void AudioUIInit()
     {
-        if (!musicIsEnabled) OffAnimation(grayImageMusicButton, orangeImageMusicButton, 0f);
-        if (!soundsIsEnabled) OffAnimation(grayImageSoundsButton, orangeImageSoundsButton, 0f);
+        if (!musicIsEnabled) OffAnimation(grayImageMusicButton, orangeImageMusicButton, musicBtnPositionOff, 0f);
+        if (!soundsIsEnabled) OffAnimation(grayImageSoundsButton, orangeImageSoundsButton, soundBtnPositionOff,0f);
     }
-    private void OnAnimation(Image bottom, Image top)
+    private void OnAnimation(Image bottom, Image top, Transform targetPosition)
     {
-        bottom.transform.DOMoveX(bottom.transform.position.x + 70, 0.3f);
+        bottom.transform.DOMoveX(targetPosition.position.x, 0.3f);
+        Debug.Log(bottom.transform.localPosition.x);
         top.DOFade(1, 0.3f);
     }
     
-    private void OffAnimation(Image bottom, Image top, float fadeSpeed = 0.3f)
+    private void OffAnimation(Image bottom, Image top, Transform targetPosition, float fadeSpeed = 0.3f)
     {
-        bottom.transform.DOMoveX(bottom.transform.position.x - 70, fadeSpeed);
+        bottom.transform.DOMoveX(targetPosition.position.x, fadeSpeed);
+        Debug.Log(bottom.transform.localPosition.x);
         top.DOFade(0, 0.3f);
     }
 
@@ -83,13 +89,13 @@ public class SoundSettings : MonoBehaviour
     {
         if (musicIsEnabled)
         {
-            OffAnimation(grayImageMusicButton,orangeImageMusicButton);
+            OffAnimation(grayImageMusicButton,orangeImageMusicButton, musicBtnPositionOff);
             musicIsEnabled = false;
             _musicManager.musicAudioSourse.mute = true;
         }
         else
         {
-            OnAnimation(grayImageMusicButton,orangeImageMusicButton);
+            OnAnimation(grayImageMusicButton,orangeImageMusicButton, musicBtnPositionOn);
             musicIsEnabled = true;
             _musicManager.musicAudioSourse.mute = false;
         }
@@ -100,13 +106,13 @@ public class SoundSettings : MonoBehaviour
     {
         if (soundsIsEnabled)
         {
-            OffAnimation(grayImageSoundsButton,orangeImageSoundsButton);
+            OffAnimation(grayImageSoundsButton,orangeImageSoundsButton, soundBtnPositionOff);
             soundsIsEnabled = false;
             _soundManager.soundsAudioSourse.mute = true;
         }
         else
         {
-            OnAnimation(grayImageSoundsButton,orangeImageSoundsButton);
+            OnAnimation(grayImageSoundsButton,orangeImageSoundsButton, soundBtnPositionOn);
             soundsIsEnabled = true;
             _soundManager.soundsAudioSourse.mute = false;
         }

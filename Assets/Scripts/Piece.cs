@@ -11,8 +11,7 @@ public class Piece : MonoBehaviour
     public Vector3Int position{get; private set;}
     public Vector3Int[] cells{get; private set;}
     public int rotationIndex{get; set;}
-    //[SerializeField] Bullet bullet;
-    
+
     public float moveDelay = 0.1f;
     public float lockDelay = 0.5f;
     [SerializeField] private CoroutinesManager _coroutinesManager;
@@ -47,6 +46,7 @@ public class Piece : MonoBehaviour
     
     private void Update()
     {
+        if (!board.allowStepping) return;
         board.Clear(this);
  
         lockTime += Time.deltaTime;
@@ -94,14 +94,11 @@ public class Piece : MonoBehaviour
                 HardDrop();    
             }
         }
-        if (board.allowStepping)
+        if (Time.time > stepTime)
         {
-            if (Time.time > stepTime)
-            {
-                Step();
-            }
-            board.Set(this);
+            Step();
         }
+        board.Set(this);
     }
     
 

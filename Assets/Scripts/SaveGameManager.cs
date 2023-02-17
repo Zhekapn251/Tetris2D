@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -51,13 +52,12 @@ public class SaveGameManager : MonoBehaviour
     {
         
         saveDataStorage.list = board.listOfAllTilesToSave;
-        saveDataStorage.activePieceRotation = board.activePiece.rotationIndex;
+        saveDataStorage.activePieceRotation = board.activePieceRotation; //activePiece.rotationIndex
         saveDataStorage.nextPieceRotation = board.nextPieceStartRotation;
         
         string json = JsonUtility.ToJson(saveDataStorage);
         PlayerPrefs.SetString(mySettingsKey, json);
         PlayerPrefs.Save();
-        Debug.Log(json);
     }
     public void SavePlayersSettings(bool saveGame)
     {
@@ -82,12 +82,13 @@ public class SaveGameManager : MonoBehaviour
         string json = JsonUtility.ToJson(audioSettings);
         PlayerPrefs.SetString(audioSettingsKey, json);
         PlayerPrefs.Save();
+        
     }
     public void LoadData()
     {
         SettingLoader();
         board.listOfAllTilesToSave = saveDataStorage.list;
-        board.activePiece.rotationIndex = saveDataStorage.activePieceRotation;
+        board.activePieceRotation = saveDataStorage.activePieceRotation; //activePiece.rotationIndex
         board.nextPieceStartRotation = saveDataStorage.nextPieceRotation;
     }
     private bool SettingLoader()
@@ -150,5 +151,11 @@ public class SaveGameManager : MonoBehaviour
         board.level = 1;
         board.score = 0;
         SavePlayersSettings(false);
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (hasFocus) return;
+        SaveGame();
     }
 }

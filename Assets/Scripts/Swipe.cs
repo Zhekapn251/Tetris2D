@@ -26,7 +26,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     //float distanceX = 0f;
     float distanceY = 0f;
 
-    [FormerlySerializedAs("_coroutinesManager")] [SerializeField] CoroutinesManager coroutinesManager;
+    [SerializeField] CoroutinesManager coroutinesManager;
     //private PointerEventData pointerEvent = new PointerEventData(EventSystem.current);
 
     private void Start()
@@ -42,7 +42,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        //prevPosition = 0;
+        if (!board.allowStepping) return;
         endPosition = eventData.position;
         CalculateDistance();
         if (delta <= swipeOrTap) //tap
