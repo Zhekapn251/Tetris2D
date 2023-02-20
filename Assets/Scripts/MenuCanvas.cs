@@ -14,9 +14,13 @@ public class MenuCanvas : MonoBehaviour
     [SerializeField] private Menu menu;
     [SerializeField] private Image progressBarFill;
     [SerializeField] private LevelManager levelManager;
+    private Color pausedBtnColor = new Color(0.82f, 0.47f, 0.47f, 1f);
+    private Color unPausedBtnColor = Color.white;
+    private ColorBlock pauseBtnColors;
 
     private void Start()
     {
+        pauseBtnColors = pauseBtn.colors;
         pauseBtn.onClick.AddListener(PauseGame);
         menuButton.onClick.AddListener(OpenMainMenu);
         progressBarFill.fillAmount = levelManager.ProgressBarInit();
@@ -30,5 +34,20 @@ public class MenuCanvas : MonoBehaviour
     private void PauseGame()
     {
         board.AllowStepping(!board.allowStepping);
+        ChangePauseBtnColor(!board.allowStepping);
+    }
+
+    private void ChangePauseBtnColor(bool isPressed)
+    {
+        if (isPressed)
+        {
+            pauseBtnColors.selectedColor = pausedBtnColor;
+            pauseBtn.colors = pauseBtnColors;
+        }
+        else
+        {
+            pauseBtnColors.selectedColor = unPausedBtnColor;
+            pauseBtn.colors = pauseBtnColors;
+        }
     }
 }

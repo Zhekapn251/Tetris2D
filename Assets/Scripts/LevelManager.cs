@@ -12,18 +12,16 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private AdsInitializer adsInitializer;
     [SerializeField] SoundManager _soundManager;
     [SerializeField] private SaveGameManager _saveGameManager;
-    public Board board;
-    //public Dictionary<GoalsType,GoalsStructure> goalsStructures = new Dictionary<GoalsType, GoalsStructure>();
+    [SerializeField] private Image progressBar;
+    [SerializeField] private Fireworks _fireworks;
+    
     private int minGoalCount = 3;
     private int maxGoalCount = 10;
     private int amountOfGeneratedObstacles;
     public int levelGoal;
-    //private float goalsIncrement;
     public int lines;
-    [SerializeField] private Image progressBar;
-    //[SerializeField] private LoseGame _loseGame;
-    //[SerializeField] private WinGame _winGame;
-    [SerializeField] private Fireworks _fireworks;
+    public Board board;
+    
     
     public void GoalsGenerator()
     {

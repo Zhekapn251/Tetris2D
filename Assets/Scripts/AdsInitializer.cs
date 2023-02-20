@@ -11,7 +11,7 @@ public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener, IU
     [SerializeField] string _iOSGameId;
     [SerializeField] bool _testMode;
     private string _gameId;
-    private int numberOfMinutes = 60 * 1;
+    private int numberOfMinutes = 60 * 5;
     float timer = 0;
     private bool istimeForAds;
     bool isLoadedAds;
