@@ -28,6 +28,7 @@ public class Board : MonoBehaviour
     private List<string> _tempLine;
     private int frequencyOfTetrominoMAppearance = 2;
     private int _countTetrominoM = 0;
+    private int areaWithoutObstacles = 10;
     private TetrominoData _data;
     private TetrominoData _nextPieceData;
     public Tilemap tilemap { get; private set; }
@@ -314,7 +315,6 @@ public class Board : MonoBehaviour
             {
                 fullRowsDelete.Add(row);
                 TilesColorDetect(row);
-                Debug.Log("+line");
                 levelManager.UpdateGoalsLines();
             }
             row++;
@@ -369,8 +369,6 @@ public class Board : MonoBehaviour
     public void LineClear(int row)
     {
         RectInt bounds = Bounds;
-
-        // Clear all tiles in the row
         for (int col = bounds.xMin; col < bounds.xMax; col++)
         {
             Vector3Int position = new Vector3Int(col, row, 0);
@@ -476,9 +474,8 @@ public class Board : MonoBehaviour
         Vector3Int position = new Vector3Int();
        do
         {
-            Debug.Log(position);
             position =
-                new Vector3Int(Random.Range(Bounds.xMin, Bounds.xMax ), Random.Range(Bounds.yMin, Bounds.yMax - 3),
+                new Vector3Int(Random.Range(Bounds.xMin, Bounds.xMax ), Random.Range(Bounds.yMin, Bounds.yMax - areaWithoutObstacles),
                     0);
         } 
        while (tilemap.HasTile(position));

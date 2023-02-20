@@ -26,15 +26,39 @@ public class LevelManager : MonoBehaviour
     public void GoalsGenerator()
     {
         lines = 0;
-        GenerateGoalsForLevel();
         GoalsBarClear();
+        GenerateGoalsDataForLevel();
         GenerateObstacles(amountOfGeneratedObstacles);
     }
 
-    private void GenerateGoalsForLevel()
+    private void GenerateGoalsDataForLevel()
     {
+        if (board.level < 5)
+        {
+            minGoalCount = 2;
+            maxGoalCount = 5;
+            amountOfGeneratedObstacles = 0;
+        }
+        else if ( board.level < 10)
+        {
+            minGoalCount = 4;
+            maxGoalCount = 8;
+            amountOfGeneratedObstacles = 5;
+        }
+        else if (board.level < 15)
+        {
+            minGoalCount = 4;
+            maxGoalCount = 8;
+            amountOfGeneratedObstacles = 10;
+        }
+        else
+        {
+            minGoalCount = 10;
+            maxGoalCount = 15;
+            amountOfGeneratedObstacles = 15;
+        }
         levelGoal = Random.Range(minGoalCount, maxGoalCount);
-        //goalsIncrement = (float)1/(levelGoal);
+        
     }
     
     private void GenerateObstacles(int amount)
