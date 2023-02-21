@@ -10,10 +10,8 @@ public class SoundManager : MonoBehaviour
     [Header("Pieces")]
     [SerializeField] AudioClip moveAsideSound;
     [SerializeField] AudioClip rotateSound;
-    [SerializeField] AudioClip moveDownSound;
     [SerializeField] AudioClip deleteLineSound;
     [SerializeField] AudioClip fireSound;
-    //[SerializeField] AudioClip dropSound;
     [SerializeField] private AudioClip lockSound;
     [SerializeField] private SaveGameManager _saveGameManager;
     public AudioSource soundsAudioSourse;
@@ -62,9 +60,7 @@ public class SoundManager : MonoBehaviour
             Sounds.Lose => loseSound,
             Sounds.MoveAside => moveAsideSound,
             Sounds.Rotate => rotateSound,
-            //Sounds.MoveDown => moveDownSound,
             Sounds.Fire => fireSound,
-            //Sounds.Drop => dropSound,
             Sounds.DeleteLine => deleteLineSound,
             Sounds.Lock => lockSound,
             _ => null

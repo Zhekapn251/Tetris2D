@@ -7140,8 +7140,6 @@ MonoBehaviour:
     tile: {fileID: 11400000, guid: a27ca45dfe355764ca2223c4efaa5510, type: 2}
   - tetromino: 7
     tile: {fileID: 11400000, guid: aee201e4269fc694991c5437ece38037, type: 2}
-  - tetromino: 8
-    tile: {fileID: 11400000, guid: 3cd21eb7591e98843894ea74002c5ed0, type: 2}
   listOfAllTilesToSave: 
   score: 0
   level: 0
@@ -8768,8 +8766,7 @@ MonoBehaviour:
   loseSound: {fileID: 8300000, guid: d1d50e706769467419465c2127f36d91, type: 3}
   moveAsideSound: {fileID: 8300000, guid: dc731c98ebe12134ba65c0a85f47124c, type: 3}
   rotateSound: {fileID: 8300000, guid: f5833ed5eb248784e8d08e16b513c010, type: 3}
-  moveDownSound: {fileID: 8300000, guid: bcffd317f47a0e2478c188eff0d55d11, type: 3}
-  deleteLineSound: {fileID: 8300000, guid: c9771e75f73c03e47b0fa3b59a05a2b0, type: 3}
+  deleteLineSound: {fileID: 8300000, guid: f9c252b8c26171a44a10bd8957c44894, type: 3}
   fireSound: {fileID: 8300000, guid: c922c34f559ead440a273a13a924cfc7, type: 3}
   lockSound: {fileID: 8300000, guid: a2b2ebdd716392440b3bf6467671ae7c, type: 3}
   _saveGameManager: {fileID: 1137843408}
@@ -17822,7 +17819,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7b09b08318f6e543b1ca68e40e1e7f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  feedbackArrowsDriver: {fileID: 0}
   soundManager: {fileID: 1762642610}
   board: {fileID: 1468007571}
 --- !u!222 &3927529936905534317

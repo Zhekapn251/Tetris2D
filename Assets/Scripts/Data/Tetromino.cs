@@ -10,8 +10,6 @@ public enum Tetromino
         S,
         Z,
         M,
-        G,
-
     }
 
 [System.Serializable]
@@ -19,15 +17,13 @@ public struct TetrominoData
 {
     public Tetromino tetromino;
     public Tile tile;
-    public Vector2Int[] cells{get; set;}
-    public Vector2Int[,] wallKicks{get; set;}
+    public Vector2Int[] cells { get; set; }
+    public Vector2Int[,] wallCollisions { get; set; }
+
     public void Initialize()
     {
-        if (tetromino != Tetromino.G)
-        {
-            this.cells = Data.Cells[this.tetromino];
-            this.wallKicks = Data.WallKicks[this.tetromino];
-        }
+        this.cells = Data.Cells[this.tetromino];
+        this.wallCollisions = Data.WallKicks[this.tetromino];
     }
 }
 

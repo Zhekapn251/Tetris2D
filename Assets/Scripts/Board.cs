@@ -70,7 +70,7 @@ public class Board : MonoBehaviour
     private void Start()
     {
         InitGameComponents();
-        saveGameManager.LoadPlayerData(); //0.5
+        saveGameManager.LoadPlayerData();
         speedSettings.SpeedSettingsInit(stepSpeed);
         for (int i=0; i<tetrominoes.Length; i++)
         {
@@ -117,7 +117,6 @@ public class Board : MonoBehaviour
             }    
             row--;
         }
-        Debug.Log(highestTileInBoard);
         if (highestTileInBoard<-4)
         {
             rate = 1f;
@@ -202,20 +201,20 @@ public class Board : MonoBehaviour
         if (!allowStepping) return;
         if(randomNextPiece == -1)
         {
-            _random = Random.Range(0, tetrominoes.Length-1);
+            _random = Random.Range(0, tetrominoes.Length);  //Length-1
         }
         GenerateActivePieceAndNextPiece();
        
         if (_nextPieceData.tetromino == Tetromino.M)
         {
             _countTetrominoM++;
-            if (_countTetrominoM > frequencyOfTetrominoMAppearance)
-            {
-                _countTetrominoM = 0;
-            }
             if (_countTetrominoM < frequencyOfTetrominoMAppearance)
             {
                 GenerateActivePieceAndNextPiece(true);
+            }
+            else
+            {
+                _countTetrominoM = 0;
             }
         }
         _data = tetrominoes[_random];
@@ -248,7 +247,7 @@ public class Board : MonoBehaviour
     private void GenerateActivePieceAndNextPiece(bool generateWithoutTetrominoM=false)
     {
         int tetrominoM = generateWithoutTetrominoM ? 1 : 0;
-        randomNextPiece = Random.Range(0, tetrominoes.Length-1-tetrominoM);//
+        randomNextPiece = Random.Range(0, tetrominoes.Length-tetrominoM);//
         _nextPieceData = tetrominoes[randomNextPiece];
     }
 

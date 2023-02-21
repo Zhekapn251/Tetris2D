@@ -21,7 +21,7 @@ public class Piece : MonoBehaviour
     //private float moveTime;   
     private float lockTime;
     private bool isFireing = false;
-
+private  float boostSpeed { set; get; }
     private void Start()
     {
         feedbackArrowsDriver = FindObjectOfType<FeedbackArrowsDriver>();
@@ -33,8 +33,9 @@ public class Piece : MonoBehaviour
         this.board = board;
         this.position = position;
         this.data = data;
+        CheckBoostOfSpeed();
         rotationIndex = 0;
-        stepTime = Time.time + board.stepSpeed;
+        stepTime = Time.time + board.stepSpeed*boostSpeed;
         lockTime = 0f;
         cells = new Vector3Int[data.cells.Length];
         for(int i=0; i<data.cells.Length; i++)
@@ -57,7 +58,6 @@ public class Piece : MonoBehaviour
     {
         if (!board.allowStepping) return;
         board.Clear(this);
- 
         lockTime += Time.deltaTime;
         if(Input.GetKeyDown(KeyCode.Q))   ///rotation ccw
         {
@@ -72,7 +72,6 @@ public class Piece : MonoBehaviour
             Rotate(+1);
             
         }
-
         if(Input.GetKeyDown(KeyCode.LeftArrow))   ///move left
         {
             feedbackArrowsDriver.StartAppearingCoroutine(Arrow.left);
@@ -109,11 +108,15 @@ public class Piece : MonoBehaviour
         }
         board.Set(this);
     }
-    
+
+    private void CheckBoostOfSpeed()
+    {
+        boostSpeed = this.data.tetromino == Tetromino.M ? 0.5f : 1f;
+    }
 
     private void Step()
     {
-        stepTime = Time.time + board.stepSpeed;
+        stepTime = Time.time + board.stepSpeed*boostSpeed;
             Move(Vector2Int.down);
             _soundManager.PlaySound(Sounds.MoveDown);
             if (lockTime >= lockDelay)
@@ -143,10 +146,9 @@ public class Piece : MonoBehaviour
         board.ActivePieceInitialRotation++;
         rotationIndex = Utils.Wrap(rotationIndex + direction, 0, 4);
         ApplyRotationMatrix(direction);
-        if (TestWallKicks(rotationIndex, direction)) return;
+        if (TestWallCollisions(rotationIndex, direction)) return;
         rotationIndex = originalRotation;
         ApplyRotationMatrix(-direction);
-        
     }
 
     private void ApplyRotationMatrix(int direction)
@@ -157,7 +159,6 @@ public class Piece : MonoBehaviour
             Vector3 cell = cells[i];
 
             int x, y;
-
             switch (data.tetromino)
             {
                 case Tetromino.M:
@@ -184,7 +185,7 @@ public class Piece : MonoBehaviour
 
     public void HardDrop()
     {
-        stepTime = Time.time + board.stepSpeed;
+        stepTime = Time.time + board.stepSpeed*boostSpeed;
           
         while (Move(Vector2Int.down))
             {
@@ -222,13 +223,13 @@ public class Piece : MonoBehaviour
     {
         StartCoroutine(FireBullet());
     }
-    private bool TestWallKicks(int rotationIndex, int rotationDirection)
+    private bool TestWallCollisions(int rotationIndex, int rotationDirection)
     {
-        int wallKickIndex = GetWallKickIndex(rotationIndex, rotationDirection);
+        int wallKickIndex = GetWallCollisionIndex(rotationIndex, rotationDirection);
         
-        for (int i = 0; i < data.wallKicks.GetLength(1); i++)  //i<5
+        for (int i = 0; i < data.wallCollisions.GetLength(1); i++)  //i<5
         {
-            Vector2Int translation = data.wallKicks[wallKickIndex, i];
+            Vector2Int translation = data.wallCollisions[wallKickIndex, i];
 
             if (Move( translation)) {
                 return true;
@@ -238,7 +239,7 @@ public class Piece : MonoBehaviour
         return false;
     }
 
-    private int GetWallKickIndex(int rotationIndex, int rotationDirection)
+    private int GetWallCollisionIndex(int rotationIndex, int rotationDirection)
     {
         int wallKickIndex = rotationIndex * 2;
 
@@ -246,7 +247,7 @@ public class Piece : MonoBehaviour
             wallKickIndex--;
         }
 
-        return Utils.Wrap(wallKickIndex, 0, data.wallKicks.GetLength(0));
+        return Utils.Wrap(wallKickIndex, 0, data.wallCollisions.GetLength(0));
     }
     
     

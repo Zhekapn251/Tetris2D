@@ -21,8 +21,13 @@ public class LevelManager : MonoBehaviour
     public int levelGoal;
     public int lines;
     public Board board;
-    
-    
+
+    private void Start()
+    {
+        Debug.Log("On Start LevelManager: lines = "+lines);
+        Debug.Log("On Start LevelManager:levelGoal = "+levelGoal);
+    }
+
     public void GoalsGenerator()
     {
         lines = 0;
@@ -87,6 +92,7 @@ public class LevelManager : MonoBehaviour
     public float ProgressBarInit()
     {
         return (float)lines / levelGoal;
+        
     }
     private void AnimateProgressBar(float goals)
     {
@@ -108,7 +114,7 @@ public class LevelManager : MonoBehaviour
 
     private bool GoalsIsReached()
     {
-        bool goalIsReached = lines == levelGoal;
+        bool goalIsReached = lines >= levelGoal;
         return goalIsReached;
     }
 
