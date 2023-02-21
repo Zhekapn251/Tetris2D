@@ -41,21 +41,21 @@ public class LevelManager : MonoBehaviour
         }
         else if ( board.level < 10)
         {
-            minGoalCount = 4;
-            maxGoalCount = 8;
-            amountOfGeneratedObstacles = 5;
+            minGoalCount = 6;
+            maxGoalCount = 12;
+            amountOfGeneratedObstacles = 2;
         }
         else if (board.level < 15)
         {
-            minGoalCount = 4;
-            maxGoalCount = 8;
-            amountOfGeneratedObstacles = 10;
+            minGoalCount = 13;
+            maxGoalCount = 20;
+            amountOfGeneratedObstacles = 5;
         }
         else
         {
-            minGoalCount = 10;
-            maxGoalCount = 15;
-            amountOfGeneratedObstacles = 15;
+            minGoalCount = 21;
+            maxGoalCount = 35;
+            amountOfGeneratedObstacles = 10;
         }
         levelGoal = Random.Range(minGoalCount, maxGoalCount);
         
@@ -86,8 +86,7 @@ public class LevelManager : MonoBehaviour
 
     public float ProgressBarInit()
     {
-        float progressBarAmount;
-        return progressBarAmount = (float)lines / levelGoal;
+        return (float)lines / levelGoal;
     }
     private void AnimateProgressBar(float goals)
     {

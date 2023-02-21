@@ -1774,7 +1774,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: b987e3f747560af4c9ce1fe8a0841478, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 8e042387276b69b4b9b7568c37080782, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -5826,9 +5826,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - {fileID: 8300000, guid: 674b80f7515b5904a97ef04e5e70284c, type: 3}
-  - {fileID: 8300000, guid: c77becab1a24e9344975d2a0e33f82c4, type: 3}
-  - {fileID: 8300000, guid: 730eba16c80f6f248aacf9adb681e4bc, type: 3}
+  - {fileID: 8300000, guid: 83a0a4ae094ac2347b9858e6778fa332, type: 3}
+  - {fileID: 8300000, guid: ffff4e08c5854a342896ff459f2f39d3, type: 3}
+  - {fileID: 8300000, guid: 4639382d3d41e6045bf3acdfb38a39ca, type: 3}
   _winGame: {fileID: 1382747554909436904}
 --- !u!1 &1226578146
 GameObject:
@@ -7145,7 +7145,6 @@ MonoBehaviour:
   listOfAllTilesToSave: 
   score: 0
   level: 0
-  activePieceRotation: 0
   nextPieceStartRotation: 0
 --- !u!114 &1468007572
 MonoBehaviour:
@@ -8766,13 +8765,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac9cf6881673e8448123899b92225f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  winSound: {fileID: 8300000, guid: 0e4e32290b74ba341be02e0cd3e3894f, type: 3}
+  winSound: {fileID: 8300000, guid: 4f148c9f78423964c8a5ce780fe6b34a, type: 3}
   loseSound: {fileID: 8300000, guid: d1d50e706769467419465c2127f36d91, type: 3}
-  moveAsideSound: {fileID: 8300000, guid: 626de5cf783b57b49aa8b21078c2b346, type: 3}
-  rotateSound: {fileID: 8300000, guid: c7c7a0151920dcd418b2b9a1a0024ad2, type: 3}
+  moveAsideSound: {fileID: 8300000, guid: dc731c98ebe12134ba65c0a85f47124c, type: 3}
+  rotateSound: {fileID: 8300000, guid: f5833ed5eb248784e8d08e16b513c010, type: 3}
   moveDownSound: {fileID: 8300000, guid: bcffd317f47a0e2478c188eff0d55d11, type: 3}
+  deleteLineSound: {fileID: 8300000, guid: c9771e75f73c03e47b0fa3b59a05a2b0, type: 3}
   fireSound: {fileID: 8300000, guid: c922c34f559ead440a273a13a924cfc7, type: 3}
-  lockSound: {fileID: 8300000, guid: 92f2caef6fa241a47a228824ceb5a41b, type: 3}
+  lockSound: {fileID: 8300000, guid: a2b2ebdd716392440b3bf6467671ae7c, type: 3}
   _saveGameManager: {fileID: 1137843408}
   soundsAudioSourse: {fileID: 0}
   SoundsOn: 0
@@ -10248,11 +10248,11 @@ MonoBehaviour:
   adsInitializer: {fileID: 149531752}
   _soundManager: {fileID: 1762642610}
   _saveGameManager: {fileID: 1137843408}
-  board: {fileID: 1468007571}
-  levelGoal: 0
-  lines: 0
   progressBar: {fileID: 3920427323835227248}
   _fireworks: {fileID: 1214244966}
+  levelGoal: 0
+  lines: 0
+  board: {fileID: 1468007571}
 --- !u!4 &2026534124
 Transform:
   m_ObjectHideFlags: 0

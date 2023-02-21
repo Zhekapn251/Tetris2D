@@ -30,20 +30,25 @@ public class Piece : MonoBehaviour
         this.data = data;
         rotationIndex = 0;
         stepTime = Time.time + board.stepSpeed;
-        //moveTime = Time.time + moveDelay;
         lockTime = 0f;
-
+        Debug.Log("activePiece Rotation after init() = "+board.ActivePieceInitialRotation);
         cells = new Vector3Int[data.cells.Length];
         for(int i=0; i<data.cells.Length; i++)
         {
             cells[i] = (Vector3Int)data.cells[i];
         }
-        for (int i = 0; i < board.activePieceRotation; i++)
+        SetInitialRotation(board.ActivePieceInitialRotation);//2=>2=>0
+    }
+
+    private void SetInitialRotation(int activePieceRotation)
+    {
+        for (int i = 0; i < activePieceRotation; i++)
         {
             Rotate(1);
         }
+        board.ActivePieceInitialRotation = activePieceRotation;
     }
-    
+
     private void Update()
     {
         if (!board.allowStepping) return;
@@ -131,12 +136,13 @@ public class Piece : MonoBehaviour
     public void Rotate(int direction)
     {
         int originalRotation = rotationIndex;
+        board.ActivePieceInitialRotation++;
         rotationIndex = Wrap(rotationIndex + direction, 0, 4);
         ApplyRotationMatrix(direction);
-
         if (TestWallKicks(rotationIndex, direction)) return;
         rotationIndex = originalRotation;
         ApplyRotationMatrix(-direction);
+        
     }
 
     private void ApplyRotationMatrix(int direction)

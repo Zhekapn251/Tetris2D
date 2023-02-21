@@ -8,4 +8,5 @@ public enum Sounds
     Fire,
     Drop,    
     Lock,
+    DeleteLine,
 }

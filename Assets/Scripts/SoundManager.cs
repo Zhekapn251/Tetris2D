@@ -11,6 +11,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] AudioClip moveAsideSound;
     [SerializeField] AudioClip rotateSound;
     [SerializeField] AudioClip moveDownSound;
+    [SerializeField] AudioClip deleteLineSound;
     [SerializeField] AudioClip fireSound;
     //[SerializeField] AudioClip dropSound;
     [SerializeField] private AudioClip lockSound;
@@ -49,6 +50,7 @@ public class SoundManager : MonoBehaviour
     public void PlaySound(Sounds sound)
     {
         var clip = GetAudioClip(sound);
+        if(clip == null) return;
         soundsAudioSourse.PlayOneShot(clip);
     }
 
@@ -60,9 +62,10 @@ public class SoundManager : MonoBehaviour
             Sounds.Lose => loseSound,
             Sounds.MoveAside => moveAsideSound,
             Sounds.Rotate => rotateSound,
-            Sounds.MoveDown => moveDownSound,
+            //Sounds.MoveDown => moveDownSound,
             Sounds.Fire => fireSound,
             //Sounds.Drop => dropSound,
+            Sounds.DeleteLine => deleteLineSound,
             Sounds.Lock => lockSound,
             _ => null
         };

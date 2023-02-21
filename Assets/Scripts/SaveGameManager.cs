@@ -46,13 +46,14 @@ public class SaveGameManager : MonoBehaviour
         board.SaveBoardPixels();
         SaveSettings();
         SavePlayersSettings(true);
+        Debug.Log("Save game");
     }
     
     public void SaveSettings()
     {
         
         saveDataStorage.list = board.listOfAllTilesToSave;
-        saveDataStorage.activePieceRotation = board.activePieceRotation; //activePiece.rotationIndex
+        saveDataStorage.activePieceRotation = board.ActivePieceInitialRotation; //activePiece.rotationIndex
         saveDataStorage.nextPieceRotation = board.nextPieceStartRotation;
         
         string json = JsonUtility.ToJson(saveDataStorage);
@@ -88,7 +89,7 @@ public class SaveGameManager : MonoBehaviour
     {
         SettingLoader();
         board.listOfAllTilesToSave = saveDataStorage.list;
-        board.activePieceRotation = saveDataStorage.activePieceRotation; //activePiece.rotationIndex
+        board.ActivePieceInitialRotation = saveDataStorage.activePieceRotation; //activePiece.rotationIndex
         board.nextPieceStartRotation = saveDataStorage.nextPieceRotation;
     }
     private bool SettingLoader()

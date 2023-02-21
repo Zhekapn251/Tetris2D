@@ -38,7 +38,21 @@ public class Board : MonoBehaviour
     public List<int> listOfAllTilesToSave = new List<int>();
     public int score = 0;
     public  int level = 1;
-    public int activePieceRotation;
+    private int activePieceInitialRotation;
+    public int ActivePieceInitialRotation
+    {
+        get => activePieceInitialRotation;
+        set
+        {
+            int min = 0; 
+            int max = 4;
+            activePieceInitialRotation = value < min
+                ? max - (min - value) % (max - min)
+                : min + (value - min) % (max - min);
+            if (activePieceInitialRotation == max) activePieceInitialRotation = min;
+        }
+
+    }
     public int nextPieceStartRotation;
     public float stepSpeed { set; get; }
     public bool allowStepping { private set; get; } = true;
@@ -101,9 +115,11 @@ public class Board : MonoBehaviour
                 var position = new Vector3Int(col, row, 0);
                 if (!tilemap.HasTile(position)) continue;
                 highestTileInBoard = position.y;
+                
             }    
             row--;
         }
+        Debug.Log(highestTileInBoard);
         if (highestTileInBoard<-4)
         {
             rate = 1f;
@@ -126,6 +142,8 @@ public class Board : MonoBehaviour
     private void StartGameRoutinesWithSaving()
     {
         LoadGameSettings();
+        Debug.Log("Start with sAVEING");
+        Debug.Log("Act Piece Rot after loading = "+ activePieceInitialRotation);
         activePiece.Initialize(this, new Vector3Int(saveGameManager.saveDataStorage.list[1],
             saveGameManager.saveDataStorage.list[2],0), tetrominoes[saveGameManager.saveDataStorage.list[0]]);
             
@@ -147,9 +165,10 @@ public class Board : MonoBehaviour
     }
     public void StartGameRoutinesWithoutSaving()
     {
+        Debug.Log("Start without sAVEING");
         tilemap.ClearAllTiles();
         StartLevelGeneration();
-        activePieceRotation = Random.Range(0, 4);
+        activePieceInitialRotation = Random.Range(0, 4);
         nextPieceStartRotation = Random.Range(0, 4);
         allowStepping = true;
         PrintLevel(level);
@@ -186,6 +205,7 @@ public class Board : MonoBehaviour
 
     private void SpawnPiece()
     {
+        if (!allowStepping) return;
         if(randomNextPiece == -1)
         {
             _random = Random.Range(0, tetrominoes.Length-1);
@@ -206,7 +226,7 @@ public class Board : MonoBehaviour
         }
         _data = tetrominoes[_random];
         _random=randomNextPiece;
-        activePieceRotation = nextPieceStartRotation;
+        activePieceInitialRotation = nextPieceStartRotation;
         nextPieceStartRotation = _nextPieceData.tetromino == Tetromino.M ? 0 : Random.Range(0, 4);
         
         activePiece.Initialize(this, _spawnPosition, _data);
@@ -355,6 +375,7 @@ public class Board : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
         for (int i = 0; i < rows.Count; i++)
         {
+            soundManager.PlaySound(Sounds.DeleteLine);
             LineClear(rows[i]);
             score++;
             UpdateScore(score);
