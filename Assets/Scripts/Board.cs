@@ -339,10 +339,7 @@ public class Board : MonoBehaviour
             StartCoroutine(DeleteRows(fullRowsDelete));
             return;
         }
-        if (fullRowsDelete.Count==0)
-        {
-            SpawnPiece();
-        }
+        SpawnPiece();
     }
 
      private  void TilesColorDetect(int row)
