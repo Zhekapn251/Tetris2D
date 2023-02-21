@@ -1,6 +1,3 @@
-
-
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -8,32 +5,21 @@ using UnityEngine.Serialization;
 public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 {
-    Vector3 startPosition;
-    Vector3 endPosition;
+    [SerializeField] FeedbackArrowsDriver feedbackArrowsDriver;
+    public SoundManager soundManager;
+    public Board board;
+    private Vector3 startPosition;
+    private Vector3 endPosition;
     private int blindMoveZone = 10;
     private int doubleMove = 100;
     private int tripleMove = 300;
-    public Board board;
-    [FormerlySerializedAs("_soundManager")] public SoundManager soundManager;
     private  float swipeOrTap= 20f;
     private float delta = 0f;
     private bool isPresed;
     private float distanceX=0f;
     private float prevPosition=0f;
-
-    //[SerializeField] Bullet bullet;
-    //private float prevDeltaMove = 0f;
-    //float distanceX = 0f;
-    float distanceY = 0f;
-
-    [SerializeField] FeedbackArrowsDriver feedbackArrowsDriver;
-    //private PointerEventData pointerEvent = new PointerEventData(EventSystem.current);
-
-    private void Start()
-    {
-      //  _coroutinesManager = GetComponent<CoroutinesManager>();
-    }
-
+    private float distanceY = 0f;
+    
     public void OnPointerDown(PointerEventData eventData)
     {
         isPresed = true;
@@ -45,7 +31,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (!board.allowStepping) return;
         endPosition = eventData.position;
         CalculateDistance();
-        if (delta <= swipeOrTap) //tap
+        if (delta <= swipeOrTap)
         {
             Tapping();
         }
@@ -70,10 +56,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (board.activePiece.data.tetromino == Tetromino.M)
         {
-            //Piece.PiuPiu();
-            board.activePiece.PiuPiu();
-            //board.activePiece.PiuPiu();
-            
+            board.activePiece.StartFireBulletCoroutine();
         }
         else
         {

@@ -1,8 +1,5 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Random=UnityEngine.Random;
 
 public class Piece : MonoBehaviour
 {
@@ -92,7 +89,7 @@ public class Piece : MonoBehaviour
         {
             if (data.tetromino == Tetromino.M)
             {
-                PiuPiu();
+                StartFireBulletCoroutine();
             }
             else
             {
@@ -148,7 +145,6 @@ public class Piece : MonoBehaviour
     private void ApplyRotationMatrix(int direction)
     {
         float[] matrix = Data.RotationMatrix;
-        // Rotate all of the cells using the rotation matrix
         for (int i = 0; i < cells.Length; i++)
         {
             Vector3 cell = cells[i];
@@ -190,14 +186,13 @@ public class Piece : MonoBehaviour
         Lock();
     }
 
-    IEnumerator PifPuff()
+    private IEnumerator FireBullet()
     {
         if (!isFireing)
         {
-            RectInt bounds = board.Bounds;
             int col= this.position.x;//x - col         y - row
             int row = position.y-2;
-            while (row >= bounds.yMin)
+            while (row >= board.Bounds.yMin)
             {
                 Vector3Int position = new Vector3Int(col, row, 0);
                 if (board.tilemap.HasTile(position))
@@ -216,9 +211,9 @@ public class Piece : MonoBehaviour
         }
     }
 
-    public void PiuPiu()
+    public void StartFireBulletCoroutine()
     {
-        StartCoroutine(PifPuff());
+        StartCoroutine(FireBullet());
     }
     private bool TestWallKicks(int rotationIndex, int rotationDirection)
     {

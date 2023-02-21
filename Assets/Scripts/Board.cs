@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using TMPro;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 using DG.Tweening;
-using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
@@ -104,13 +101,13 @@ public class Board : MonoBehaviour
     {
         float rate;
         var highestTileInBoard = 0;
-        RectInt bounds = Bounds;
+        //RectInt bounds = Bounds;
 
-        var  row = bounds.yMax;
+        var  row = Bounds.yMax;
         // Shift every row above down one
-        while (row > bounds.yMin && highestTileInBoard==0)
+        while (row > Bounds.yMin && highestTileInBoard==0)
         {
-            for (var col = bounds.xMin; col < bounds.xMax && highestTileInBoard==0; col++)
+            for (var col = Bounds.xMin; col < Bounds.xMax && highestTileInBoard==0; col++)
             {
                 var position = new Vector3Int(col, row, 0);
                 if (!tilemap.HasTile(position)) continue;
@@ -183,12 +180,11 @@ public class Board : MonoBehaviour
     
     private void LoadTilesFromSaveSpot()
     {
-        RectInt bounds = Bounds;
         int itemInList = 0;
-        int  row = bounds.yMin;
-        while (row < bounds.yMax)
+        int  row = Bounds.yMin;
+        while (row < Bounds.yMax)
         {
-            for (var col = bounds.xMin; col < bounds.xMax; col++)
+            for (var col = Bounds.xMin; col < Bounds.xMax; col++)
             {
                 if (saveGameManager.tilesDataStorage.list[itemInList + 6] < 100)
                 {
@@ -290,7 +286,6 @@ public class Board : MonoBehaviour
 
     public bool  IsValidPosition(Piece piece, Vector3Int position)
     {
-        RectInt bounds = Bounds;
         foreach (var cell in piece.cells)
         {
             Vector3Int tilePosition = cell+position;
@@ -298,7 +293,7 @@ public class Board : MonoBehaviour
             {
                 return false;
             }
-            if(!bounds.Contains((Vector2Int)tilePosition))
+            if(!Bounds.Contains((Vector2Int)tilePosition))
             {
                 return false;
             }
@@ -327,9 +322,8 @@ public class Board : MonoBehaviour
      public void ClearLines()
     {
         var fullRowsDelete = new List<int>();
-        RectInt bounds = Bounds;
-        int row= bounds.yMin;
-        while (row<bounds.yMax)
+        int row= Bounds.yMin;
+        while (row<Bounds.yMax)
         {
             if(IsLineFull(row))
             {
@@ -361,8 +355,7 @@ public class Board : MonoBehaviour
      private  void TilesColorDetect(int row)
      {
          _tempLine = new List<string>();
-         RectInt bounds = Bounds;
-         for(int col = bounds.xMin; col < bounds.xMax; col++)
+         for(int col = Bounds.xMin; col < Bounds.xMax; col++)
          {
              Vector3Int position = new Vector3Int(col, row, 0);
              var tempTile = tilemap.GetTile(position);
@@ -389,15 +382,14 @@ public class Board : MonoBehaviour
 
     public void LineClear(int row)
     {
-        RectInt bounds = Bounds;
-        for (int col = bounds.xMin; col < bounds.xMax; col++)
+        for (int col = Bounds.xMin; col < Bounds.xMax; col++)
         {
             Vector3Int position = new Vector3Int(col, row, 0);
             tilemap.SetTile(position, null);
         }
-        while (row < bounds.yMax)
+        while (row < Bounds.yMax)
         {
-            for (int col = bounds.xMin; col < bounds.xMax; col++)
+            for (int col = Bounds.xMin; col < Bounds.xMax; col++)
             {
                 Vector3Int position = new Vector3Int(col, row + 1, 0);
                 TileBase above = tilemap.GetTile(position);
@@ -425,11 +417,10 @@ public class Board : MonoBehaviour
     
     public void SaveBoardPixels()
     {
-        RectInt bounds = Bounds;
-        int  row = bounds.yMin;
-        while (row < bounds.yMax)
+        int  row = Bounds.yMin;
+        while (row < Bounds.yMax)
         {
-            for (int col = bounds.xMin; col < bounds.xMax; col++)
+            for (int col = Bounds.xMin; col < Bounds.xMax; col++)
             {
                 Vector3Int position = new Vector3Int(col, row, 0);
                 listOfAllTilesToSave.Add(ScanTileMap(position));
@@ -443,8 +434,7 @@ public class Board : MonoBehaviour
 
     private bool IsLineFull(int row)
     {
-        RectInt bounds = Bounds;
-        for(int col = bounds.xMin; col < bounds.xMax; col++)
+        for(int col = Bounds.xMin; col < Bounds.xMax; col++)
         {
             Vector3Int position = new Vector3Int(col, row, 0);
             if(!tilemap.HasTile(position))
