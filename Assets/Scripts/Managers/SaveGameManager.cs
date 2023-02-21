@@ -46,7 +46,6 @@ public class SaveGameManager : MonoBehaviour
         board.SaveBoardPixels();
         SaveSettings();
         SavePlayersSettings(true);
-        Debug.Log("Save game");
     }
     
     public void SaveSettings()

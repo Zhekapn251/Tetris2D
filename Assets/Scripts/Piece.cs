@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class Piece : MonoBehaviour
 
     public float moveDelay = 0.1f;
     public float lockDelay = 0.5f;
-    [SerializeField] private FeedbackArrowsDriver feedbackArrowsDriver;
+    private FeedbackArrowsDriver feedbackArrowsDriver;
     [SerializeField] private SoundManager _soundManager;
     [SerializeField] private PoolOfBullets PoolOfBullets;
     private float stepTime;
@@ -20,6 +21,13 @@ public class Piece : MonoBehaviour
     //private float moveTime;   
     private float lockTime;
     private bool isFireing = false;
+
+    private void Start()
+    {
+        feedbackArrowsDriver = FindObjectOfType<FeedbackArrowsDriver>();
+        if (feedbackArrowsDriver==null) Debug.Log("Piece :: FeedbackArrowsDriver is null");
+    }
+
     public void Initialize(Board board, Vector3Int position, TetrominoData data)
     {
         this.board = board;
@@ -28,7 +36,6 @@ public class Piece : MonoBehaviour
         rotationIndex = 0;
         stepTime = Time.time + board.stepSpeed;
         lockTime = 0f;
-        Debug.Log("activePiece Rotation after init() = "+board.ActivePieceInitialRotation);
         cells = new Vector3Int[data.cells.Length];
         for(int i=0; i<data.cells.Length; i++)
         {
@@ -134,7 +141,7 @@ public class Piece : MonoBehaviour
     {
         int originalRotation = rotationIndex;
         board.ActivePieceInitialRotation++;
-        rotationIndex = Wrap(rotationIndex + direction, 0, 4);
+        rotationIndex = Utils.Wrap(rotationIndex + direction, 0, 4);
         ApplyRotationMatrix(direction);
         if (TestWallKicks(rotationIndex, direction)) return;
         rotationIndex = originalRotation;
@@ -239,13 +246,10 @@ public class Piece : MonoBehaviour
             wallKickIndex--;
         }
 
-        return Wrap(wallKickIndex, 0, data.wallKicks.GetLength(0));
+        return Utils.Wrap(wallKickIndex, 0, data.wallKicks.GetLength(0));
     }
     
-    private int Wrap(int input, int min, int max) =>
-        input < min 
-            ? max - (min - input) % (max - min)
-            : min + (input - min) % (max - min);
+    
 
     public bool Move(Vector2Int translation)        // translation -- sdvig
     {

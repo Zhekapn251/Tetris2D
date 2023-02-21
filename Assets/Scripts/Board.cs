@@ -43,9 +43,10 @@ public class Board : MonoBehaviour
         {
             int min = 0; 
             int max = 4;
-            activePieceInitialRotation = value < min
-                ? max - (min - value) % (max - min)
-                : min + (value - min) % (max - min);
+            activePieceInitialRotation = Utils.Wrap(value, min, max);
+            //activePieceInitialRotation = value < min
+            //    ? max - (min - value) % (max - min)
+            //    : min + (value - min) % (max - min);
             if (activePieceInitialRotation == max) activePieceInitialRotation = min;
         }
 
@@ -139,8 +140,6 @@ public class Board : MonoBehaviour
     private void StartGameRoutinesWithSaving()
     {
         LoadGameSettings();
-        Debug.Log("Start with sAVEING");
-        Debug.Log("Act Piece Rot after loading = "+ activePieceInitialRotation);
         activePiece.Initialize(this, new Vector3Int(saveGameManager.tilesDataStorage.list[1],
             saveGameManager.tilesDataStorage.list[2],0), tetrominoes[saveGameManager.tilesDataStorage.list[0]]);
             
@@ -162,7 +161,6 @@ public class Board : MonoBehaviour
     }
     public void StartGameRoutinesWithoutSaving()
     {
-        Debug.Log("Start without sAVEING");
         tilemap.ClearAllTiles();
         StartLevelGeneration();
         activePieceInitialRotation = Random.Range(0, 4);
@@ -258,13 +256,8 @@ public class Board : MonoBehaviour
      {
          soundManager.PlaySound(Sounds.Lose);
          allowStepping = false;
-         GameOverSequence();
+         fadeGameOver.LooseFade();
      }
-
-    private void GameOverSequence()
-    {
-        fadeGameOver.LooseFade();
-    }
     
     public void Set(Piece piece)
     {
