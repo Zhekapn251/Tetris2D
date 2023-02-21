@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -5,7 +6,7 @@ using UnityEngine.Serialization;
 public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
 {
-    [SerializeField] FeedbackArrowsDriver feedbackArrowsDriver;
+    
     public SoundManager soundManager;
     public Board board;
     private Vector3 startPosition;
@@ -19,7 +20,14 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private float distanceX=0f;
     private float prevPosition=0f;
     private float distanceY = 0f;
-    
+    private FeedbackArrowsDriver feedbackArrowsDriver;
+
+    private void Start()
+    {
+        feedbackArrowsDriver = FindObjectOfType<FeedbackArrowsDriver>();
+        if(feedbackArrowsDriver == null) Debug.Log("Swipe:: FeedbackArrowsDriver is null");
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
         isPresed = true;
