@@ -14,7 +14,7 @@ public class Piece : MonoBehaviour
 
     public float moveDelay = 0.1f;
     public float lockDelay = 0.5f;
-    [SerializeField] private CoroutinesManager _coroutinesManager;
+    [SerializeField] private FeedbackArrowsDriver feedbackArrowsDriver;
     [SerializeField] private SoundManager _soundManager;
     [SerializeField] private PoolOfBullets PoolOfBullets;
     private float stepTime;
@@ -57,13 +57,13 @@ public class Piece : MonoBehaviour
         lockTime += Time.deltaTime;
         if(Input.GetKeyDown(KeyCode.Q))   ///rotation ccw
         {
-            _coroutinesManager.StartAppearingCoroutine(Arrow.rotate);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.rotate);
             _soundManager.PlaySound(Sounds.Rotate);
             Rotate(-1);
         }
         else if (Input.GetKeyDown(KeyCode.E)||Input.GetKeyDown(KeyCode.UpArrow))   //rotation cw
         {
-            _coroutinesManager.StartAppearingCoroutine(Arrow.rotate);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.rotate);
             _soundManager.PlaySound(Sounds.Rotate);
             Rotate(+1);
             
@@ -71,20 +71,20 @@ public class Piece : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.LeftArrow))   ///move left
         {
-            _coroutinesManager.StartAppearingCoroutine(Arrow.left);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.left);
             Move( Vector2Int.left);
             _soundManager.PlaySound(Sounds.MoveAside);
             
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))   //move right
         {
-            _coroutinesManager.StartAppearingCoroutine(Arrow.right);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.right);
             Move( Vector2Int.right);
             _soundManager.PlaySound(Sounds.MoveAside);
         }
         else if(Input.GetKeyDown(KeyCode.DownArrow))   ///move left
         {
-            _coroutinesManager.StartAppearingCoroutine(Arrow.down);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.down);
             Move( Vector2Int.down);
             _soundManager.PlaySound(Sounds.MoveDown);
         }

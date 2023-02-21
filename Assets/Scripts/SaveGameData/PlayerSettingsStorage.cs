@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 [Serializable]
-public class SavePlayerSettings
+public class PlayerSettingsStorage
 {
     public int score = 0;
     public int level = 1;

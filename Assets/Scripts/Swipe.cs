@@ -26,7 +26,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     //float distanceX = 0f;
     float distanceY = 0f;
 
-    [SerializeField] CoroutinesManager coroutinesManager;
+    [SerializeField] FeedbackArrowsDriver feedbackArrowsDriver;
     //private PointerEventData pointerEvent = new PointerEventData(EventSystem.current);
 
     private void Start()
@@ -89,7 +89,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if ((distanceX > tripleMove)/*&&(frameCount%2==0)*/)
         {
-            coroutinesManager.StartAppearingCoroutine(Arrow.left);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.left);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.left);
             board.Set(board.activePiece);
@@ -103,7 +103,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         
         else if (distanceX < -tripleMove)
         { 
-            coroutinesManager.StartAppearingCoroutine(Arrow.right);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.right);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.right);
             board.Set(board.activePiece);
@@ -117,7 +117,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         
         else if (distanceX > doubleMove)
         {
-            coroutinesManager.StartAppearingCoroutine(Arrow.left);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.left);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.left);
             board.Set(board.activePiece);
@@ -128,7 +128,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         
         else if (distanceX < -doubleMove)
         { 
-            coroutinesManager.StartAppearingCoroutine(Arrow.right);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.right);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.right);
             board.Set(board.activePiece);
@@ -139,7 +139,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         
         else if ((distanceX > blindMoveZone)&&(distanceX < doubleMove)/*&&(frameCount==1)*/)
         {
-            coroutinesManager.StartAppearingCoroutine(Arrow.left);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.left);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.left);
             board.Set(board.activePiece);
@@ -147,7 +147,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         
         else if ((distanceX < -blindMoveZone)&&(distanceX > -doubleMove)/*&&(frameCount==1)*/)
         {
-            coroutinesManager.StartAppearingCoroutine(Arrow.right);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.right);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.right);
             board.Set(board.activePiece);
@@ -161,7 +161,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (distanceY > 150)
         {
-            coroutinesManager.StartAppearingCoroutine(Arrow.down);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.down);
             board.Clear(board.activePiece);
             board.activePiece.Move(Vector2Int.down);
             board.Set(board.activePiece);
@@ -169,7 +169,7 @@ public class Swipe : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
         else if (distanceY < -150)
         {
-            coroutinesManager.StartAppearingCoroutine(Arrow.rotate);
+            feedbackArrowsDriver.StartAppearingCoroutine(Arrow.rotate);
             board.Clear(board.activePiece);
             board.activePiece.Rotate(1);
             board.Set(board.activePiece);

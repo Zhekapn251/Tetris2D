@@ -23,7 +23,7 @@ public class SpeedSettings : MonoBehaviour
      increaseBtn.onClick.AddListener(IncreaseFillBar);
      decreaseBtn.onClick.AddListener(DecreaseFillBar);
      exitMenu.onClick.AddListener(SpeedMenuOff);
-     speed = _saveGameManager.savePlayerSettings.speed;
+     speed = _saveGameManager.playerSettingsStorage.speed;
      SetSpeedBar();
      Debug.Log("Start SpeedSettings ....OK");
     }

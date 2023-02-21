@@ -7,9 +7,9 @@ using UnityEngine.Tilemaps;
 public class SaveGameManager : MonoBehaviour
 {
     public Board board;
-    public AudioSettings audioSettings;
-    public SaveDataStorage saveDataStorage;
-    public SavePlayerSettings savePlayerSettings;
+    public AudioSettingsStorage audioSettingsStorage;
+    public TilesDataStorage tilesDataStorage;
+    public PlayerSettingsStorage playerSettingsStorage;
     public SoundManager soundManager;
     public MusicManager musicManager;
     [SerializeField] private LevelManager levelManager;
@@ -52,35 +52,35 @@ public class SaveGameManager : MonoBehaviour
     public void SaveSettings()
     {
         
-        saveDataStorage.list = board.listOfAllTilesToSave;
-        saveDataStorage.activePieceRotation = board.ActivePieceInitialRotation; //activePiece.rotationIndex
-        saveDataStorage.nextPieceRotation = board.nextPieceStartRotation;
+        tilesDataStorage.list = board.listOfAllTilesToSave;
+        tilesDataStorage.activePieceRotation = board.ActivePieceInitialRotation; //activePiece.rotationIndex
+        tilesDataStorage.nextPieceRotation = board.nextPieceStartRotation;
         
-        string json = JsonUtility.ToJson(saveDataStorage);
+        string json = JsonUtility.ToJson(tilesDataStorage);
         PlayerPrefs.SetString(mySettingsKey, json);
         PlayerPrefs.Save();
     }
     public void SavePlayersSettings(bool saveGame)
     {
-        savePlayerSettings.isSaved = saveGame; 
-        savePlayerSettings.level = board.level;
-        savePlayerSettings.score = board.score;
-        savePlayerSettings.speed = board.stepSpeed;
-        savePlayerSettings.lines = levelManager.lines;
-        savePlayerSettings.levelGoal = levelManager.levelGoal;
-        string json = JsonUtility.ToJson(savePlayerSettings);
+        playerSettingsStorage.isSaved = saveGame; 
+        playerSettingsStorage.level = board.level;
+        playerSettingsStorage.score = board.score;
+        playerSettingsStorage.speed = board.stepSpeed;
+        playerSettingsStorage.lines = levelManager.lines;
+        playerSettingsStorage.levelGoal = levelManager.levelGoal;
+        string json = JsonUtility.ToJson(playerSettingsStorage);
         PlayerPrefs.SetString(playerSettingsKey, json);
         PlayerPrefs.Save();
     }
 
     public void SaveAudioSettings()
     {
-        audioSettings.soundsOn = soundManager.SoundsOn;
-        audioSettings.soundsVolume = soundManager.SoundsVolume;
-        audioSettings.musicOn = musicManager.MusicOn;
-        audioSettings.musicVolume = musicManager.MusicVolume;
+        audioSettingsStorage.soundsOn = soundManager.SoundsOn;
+        audioSettingsStorage.soundsVolume = soundManager.SoundsVolume;
+        audioSettingsStorage.musicOn = musicManager.MusicOn;
+        audioSettingsStorage.musicVolume = musicManager.MusicVolume;
         
-        string json = JsonUtility.ToJson(audioSettings);
+        string json = JsonUtility.ToJson(audioSettingsStorage);
         PlayerPrefs.SetString(audioSettingsKey, json);
         PlayerPrefs.Save();
         
@@ -88,41 +88,41 @@ public class SaveGameManager : MonoBehaviour
     public void LoadData()
     {
         SettingLoader();
-        board.listOfAllTilesToSave = saveDataStorage.list;
-        board.ActivePieceInitialRotation = saveDataStorage.activePieceRotation; //activePiece.rotationIndex
-        board.nextPieceStartRotation = saveDataStorage.nextPieceRotation;
+        board.listOfAllTilesToSave = tilesDataStorage.list;
+        board.ActivePieceInitialRotation = tilesDataStorage.activePieceRotation; //activePiece.rotationIndex
+        board.nextPieceStartRotation = tilesDataStorage.nextPieceRotation;
     }
     private bool SettingLoader()
     {
         if (PlayerPrefs.HasKey(mySettingsKey))
         {
             string json = PlayerPrefs.GetString(mySettingsKey);
-            saveDataStorage = JsonUtility.FromJson<SaveDataStorage>(json);
+            tilesDataStorage = JsonUtility.FromJson<TilesDataStorage>(json);
             return true;
         }
-        saveDataStorage = new SaveDataStorage();
+        tilesDataStorage = new TilesDataStorage();
         return false;
     }
 
     public void LoadPlayerData()
     {
         PlayerSettingLoader();
-        isSaved = savePlayerSettings.isSaved;
-        board.level = savePlayerSettings.level;
-        board.score = savePlayerSettings.score;
-        board.stepSpeed = savePlayerSettings.speed;
-        levelManager.lines = savePlayerSettings.lines;
-        levelManager.levelGoal = savePlayerSettings.levelGoal;
+        isSaved = playerSettingsStorage.isSaved;
+        board.level = playerSettingsStorage.level;
+        board.score = playerSettingsStorage.score;
+        board.stepSpeed = playerSettingsStorage.speed;
+        levelManager.lines = playerSettingsStorage.lines;
+        levelManager.levelGoal = playerSettingsStorage.levelGoal;
     }
     private bool PlayerSettingLoader()
     {
         if (PlayerPrefs.HasKey(playerSettingsKey))
         {
             string json = PlayerPrefs.GetString(playerSettingsKey);
-            savePlayerSettings = JsonUtility.FromJson<SavePlayerSettings>(json);
+            playerSettingsStorage = JsonUtility.FromJson<PlayerSettingsStorage>(json);
             return true;
         }
-        savePlayerSettings = new SavePlayerSettings();
+        playerSettingsStorage = new PlayerSettingsStorage();
         return false;
         
     }
@@ -130,10 +130,10 @@ public class SaveGameManager : MonoBehaviour
     public void LoadAudioData()
     {
         AudioSettingLoader();
-        soundManager.SoundsOn = audioSettings.soundsOn;
-        soundManager.SoundsVolume = audioSettings.soundsVolume;
-        musicManager.MusicOn = audioSettings.musicOn;
-        musicManager.MusicVolume = audioSettings.musicVolume;
+        soundManager.SoundsOn = audioSettingsStorage.soundsOn;
+        soundManager.SoundsVolume = audioSettingsStorage.soundsVolume;
+        musicManager.MusicOn = audioSettingsStorage.musicOn;
+        musicManager.MusicVolume = audioSettingsStorage.musicVolume;
     }
     
     private bool AudioSettingLoader()
@@ -141,10 +141,10 @@ public class SaveGameManager : MonoBehaviour
         if (PlayerPrefs.HasKey(audioSettingsKey))
         {
             string json = PlayerPrefs.GetString(audioSettingsKey);
-            audioSettings = JsonUtility.FromJson<AudioSettings>(json);
+            audioSettingsStorage = JsonUtility.FromJson<AudioSettingsStorage>(json);
             return true;
         }
-        audioSettings = new AudioSettings();
+        audioSettingsStorage = new AudioSettingsStorage();
         return false;
     }
     public void ResetData()

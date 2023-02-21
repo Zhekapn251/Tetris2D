@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class CoroutinesManager : MonoBehaviour
+public class FeedbackArrowsDriver : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private Image[] _images = new Image[4];

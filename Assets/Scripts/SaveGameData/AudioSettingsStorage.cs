@@ -3,7 +3,7 @@
     using System;
 
     [Serializable]
-    public class AudioSettings
+    public class AudioSettingsStorage
     {
         public float soundsVolume = 0.45f;
         public float musicVolume = 0.15f;

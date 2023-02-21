@@ -144,12 +144,12 @@ public class Board : MonoBehaviour
         LoadGameSettings();
         Debug.Log("Start with sAVEING");
         Debug.Log("Act Piece Rot after loading = "+ activePieceInitialRotation);
-        activePiece.Initialize(this, new Vector3Int(saveGameManager.saveDataStorage.list[1],
-            saveGameManager.saveDataStorage.list[2],0), tetrominoes[saveGameManager.saveDataStorage.list[0]]);
+        activePiece.Initialize(this, new Vector3Int(saveGameManager.tilesDataStorage.list[1],
+            saveGameManager.tilesDataStorage.list[2],0), tetrominoes[saveGameManager.tilesDataStorage.list[0]]);
             
-        nextactivePiece.Initialize(this, new Vector3Int(saveGameManager.saveDataStorage.list[4],
-            saveGameManager.saveDataStorage.list[5],0), tetrominoes[saveGameManager.saveDataStorage.list[3]]);
-        randomNextPiece = saveGameManager.saveDataStorage.list[3];
+        nextactivePiece.Initialize(this, new Vector3Int(saveGameManager.tilesDataStorage.list[4],
+            saveGameManager.tilesDataStorage.list[5],0), tetrominoes[saveGameManager.tilesDataStorage.list[3]]);
+        randomNextPiece = saveGameManager.tilesDataStorage.list[3];
         _random = randomNextPiece;
         Set(activePiece);
         SetNext(nextactivePiece);
@@ -190,11 +190,11 @@ public class Board : MonoBehaviour
         {
             for (var col = bounds.xMin; col < bounds.xMax; col++)
             {
-                if (saveGameManager.saveDataStorage.list[itemInList + 6] < 100)
+                if (saveGameManager.tilesDataStorage.list[itemInList + 6] < 100)
                 {
-                    var generatedSavedPosition = new Vector3Int(saveGameManager.saveDataStorage.list[itemInList + 7],
-                        saveGameManager.saveDataStorage.list[itemInList + 8], 0);
-                    var savedTile = tetrominoes[saveGameManager.saveDataStorage.list[itemInList + 6]].tile;
+                    var generatedSavedPosition = new Vector3Int(saveGameManager.tilesDataStorage.list[itemInList + 7],
+                        saveGameManager.tilesDataStorage.list[itemInList + 8], 0);
+                    var savedTile = tetrominoes[saveGameManager.tilesDataStorage.list[itemInList + 6]].tile;
                     tilemap.SetTile(generatedSavedPosition, savedTile);
                 }
                 itemInList += 3;
