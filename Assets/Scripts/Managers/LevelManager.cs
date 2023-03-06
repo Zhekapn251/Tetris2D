@@ -22,13 +22,7 @@ public class LevelManager : MonoBehaviour
     public int levelGoal;
     public int lines;
     public Board board;
-
-    private void Start()
-    {
-        Debug.Log("On Start LevelManager: lines = "+lines);
-        Debug.Log("On Start LevelManager:levelGoal = "+levelGoal);
-    }
-
+    
     public void GoalsGenerator()
     {
         lines = 0;

@@ -44,9 +44,6 @@ public class Board : MonoBehaviour
             int min = 0; 
             int max = 4;
             activePieceInitialRotation = Utils.Wrap(value, min, max);
-            //activePieceInitialRotation = value < min
-            //    ? max - (min - value) % (max - min)
-            //    : min + (value - min) % (max - min);
             if (activePieceInitialRotation == max) activePieceInitialRotation = min;
         }
 
@@ -64,7 +61,6 @@ public class Board : MonoBehaviour
     private void Awake()
     {
         DOTween.Init();
-        Debug.Log("Awake() ---- OK");
     }
     
     private void Start()
@@ -84,7 +80,6 @@ public class Board : MonoBehaviour
         {
             StartGameRoutinesWithoutSaving();
         }
-        Debug.Log("Start() ---- OK");
     }
 
     private void InitGameComponents()
@@ -102,10 +97,9 @@ public class Board : MonoBehaviour
     {
         float rate;
         var highestTileInBoard = 0;
-        //RectInt bounds = Bounds;
 
         var  row = Bounds.yMax;
-        // Shift every row above down one
+        
         while (row > Bounds.yMin && highestTileInBoard==0)
         {
             for (var col = Bounds.xMin; col < Bounds.xMax && highestTileInBoard==0; col++)
@@ -201,7 +195,7 @@ public class Board : MonoBehaviour
         if (!allowStepping) return;
         if(randomNextPiece == -1)
         {
-            _random = Random.Range(0, tetrominoes.Length);  //Length-1
+            _random = Random.Range(0, tetrominoes.Length);
         }
         GenerateActivePieceAndNextPiece();
        
@@ -247,7 +241,7 @@ public class Board : MonoBehaviour
     private void GenerateActivePieceAndNextPiece(bool generateWithoutTetrominoM=false)
     {
         int tetrominoM = generateWithoutTetrominoM ? 1 : 0;
-        randomNextPiece = Random.Range(0, tetrominoes.Length-tetrominoM);//
+        randomNextPiece = Random.Range(0, tetrominoes.Length-tetrominoM);
         _nextPieceData = tetrominoes[randomNextPiece];
     }
 
@@ -466,7 +460,7 @@ public class Board : MonoBehaviour
     private void EraseScore()
     {
         saveGameManager.ResetData();
-        UpdateScore(score);//UpdateScore(score);
+        UpdateScore(score);
     }
     
     public void GenerateObstacle()

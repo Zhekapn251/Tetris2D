@@ -40,7 +40,7 @@ public  class FireBaseInit : MonoBehaviour
                 // TODO: Continue with Firebase initialization.
                _isInit=true;
             } else {
-                Debug.LogError("Could not resolve all Firebase dependencies: " + _dependencyStatus);
+                //Debug.LogError("Could not resolve all Firebase dependencies: " + _dependencyStatus);
             }
         });
     }
@@ -48,7 +48,6 @@ public  class FireBaseInit : MonoBehaviour
     public void FirebaseStartLevel(int levelNumber=1)
     {
         if (!_isInit) return;
-        Debug.Log("SendFirebaseEvent");
         FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventLevelStart,
             new Parameter(FirebaseAnalytics.ParameterLevel,levelNumber));
     }
