@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 using Firebase;
@@ -8,15 +5,16 @@ using Firebase.Analytics;
 
 public  class FireBaseInit : MonoBehaviour
 {
-    private DependencyStatus dependencyStatus;
-    public static FireBaseInit instance;
+    private DependencyStatus _dependencyStatus;
     private bool _isInit;
+    
+    public static FireBaseInit Instance;
 
     private void Awake()
     {
-        if (instance == null) { 
-            instance = this; 
-        } else if (instance == this)
+        if (Instance == null) { 
+            Instance = this; 
+        } else if (Instance == this)
         {
             Destroy(gameObject); 
         }
@@ -26,7 +24,6 @@ public  class FireBaseInit : MonoBehaviour
 
     private void Start()
     {
-        
         Firebase.FirebaseApp.CheckDependenciesAsync().ContinueWith(checkTask => {
             // Peek at the status and see if we need to try to fix dependencies.
             Firebase.DependencyStatus status = checkTask.Result;
@@ -38,19 +35,18 @@ public  class FireBaseInit : MonoBehaviour
                 return checkTask;
             }
         }).Unwrap().ContinueWith(task => {
-            dependencyStatus = task.Result;
-            if (dependencyStatus == Firebase.DependencyStatus.Available) {
+            _dependencyStatus = task.Result;
+            if (_dependencyStatus == Firebase.DependencyStatus.Available) {
                 // TODO: Continue with Firebase initialization.
                _isInit=true;
             } else {
-                Debug.LogError("Could not resolve all Firebase dependencies: " + dependencyStatus);
+                Debug.LogError("Could not resolve all Firebase dependencies: " + _dependencyStatus);
             }
         });
     }
 
     public void FirebaseStartLevel(int levelNumber=1)
     {
-        
         if (!_isInit) return;
         Debug.Log("SendFirebaseEvent");
         FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventLevelStart,

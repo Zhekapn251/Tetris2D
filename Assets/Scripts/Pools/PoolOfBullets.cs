@@ -7,13 +7,13 @@ public class PoolOfBullets : MonoBehaviour
 {
     public List<Bullet> pooledBullets;
     public Bullet pooledBullet;
-    private int amountInPool = 3;
+    private int _amountInPool = 3;
 
     private void Start()
     {
         Bullet tmp;
         pooledBullets = new List<Bullet>();
-        for (int i = 0; i < amountInPool; i++)
+        for (int i = 0; i < _amountInPool; i++)
         {
             tmp = Instantiate(pooledBullet, transform);
             tmp.Init(this);

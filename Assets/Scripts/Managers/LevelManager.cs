@@ -10,14 +10,15 @@ using Random = UnityEngine.Random;
 public class LevelManager : MonoBehaviour
 {
     [SerializeField] private AdsInitializer adsInitializer;
-    [SerializeField] SoundManager _soundManager;
-    [SerializeField] private SaveGameManager _saveGameManager;
+    [SerializeField] private SoundManager soundManager;
+    [SerializeField] private SaveGameManager saveGameManager;
     [SerializeField] private Image progressBar;
-    [SerializeField] private Fireworks _fireworks;
+    [SerializeField] private Fireworks fireworks;
     
-    private int minGoalCount = 3;
-    private int maxGoalCount = 10;
-    private int amountOfGeneratedObstacles;
+    private int _minGoalCount = 3;
+    private int _maxGoalCount = 10;
+    private int _amountOfGeneratedObstacles;
+    
     public int levelGoal;
     public int lines;
     public Board board;
@@ -33,37 +34,36 @@ public class LevelManager : MonoBehaviour
         lines = 0;
         GoalsBarClear();
         GenerateGoalsDataForLevel();
-        GenerateObstacles(amountOfGeneratedObstacles);
+        GenerateObstacles(_amountOfGeneratedObstacles);
     }
 
     private void GenerateGoalsDataForLevel()
     {
         if (board.level < 5)
         {
-            minGoalCount = 2;
-            maxGoalCount = 5;
-            amountOfGeneratedObstacles = 0;
+            _minGoalCount = 2;
+            _maxGoalCount = 5;
+            _amountOfGeneratedObstacles = 0;
         }
         else if ( board.level < 10)
         {
-            minGoalCount = 6;
-            maxGoalCount = 12;
-            amountOfGeneratedObstacles = 2;
+            _minGoalCount = 6;
+            _maxGoalCount = 12;
+            _amountOfGeneratedObstacles = 2;
         }
         else if (board.level < 15)
         {
-            minGoalCount = 13;
-            maxGoalCount = 20;
-            amountOfGeneratedObstacles = 5;
+            _minGoalCount = 13;
+            _maxGoalCount = 20;
+            _amountOfGeneratedObstacles = 5;
         }
         else
         {
-            minGoalCount = 21;
-            maxGoalCount = 35;
-            amountOfGeneratedObstacles = 10;
+            _minGoalCount = 21;
+            _maxGoalCount = 35;
+            _amountOfGeneratedObstacles = 10;
         }
-        levelGoal = Random.Range(minGoalCount, maxGoalCount);
-        
+        levelGoal = Random.Range(_minGoalCount, _maxGoalCount);
     }
     
     private void GenerateObstacles(int amount)
@@ -101,15 +101,14 @@ public class LevelManager : MonoBehaviour
 
     private void StartWinSequence()
     {
-
         board.level++;
         board.AllowStepping(false);
-        FireBaseInit.instance.FirebaseStartLevel(board.level);
+        FireBaseInit.Instance.FirebaseStartLevel(board.level);
         board.UpdateTextLevelOnUI();
-        _soundManager.PlaySound(Sounds.Win);
-        _saveGameManager.SavePlayersSettings(false);
-        _fireworks.FireworksEnable();
-        adsInitializer.ShowAds = true;
+        soundManager.PlaySound(Sounds.Win);
+        saveGameManager.SavePlayersSettings(false);
+        fireworks.FireworksEnable();
+        adsInitializer.showAds = true;
     }
 
     private bool GoalsIsReached()

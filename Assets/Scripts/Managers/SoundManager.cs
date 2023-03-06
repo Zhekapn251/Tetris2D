@@ -5,18 +5,19 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    [SerializeField] AudioClip winSound;
-    [SerializeField] AudioClip loseSound;
+    [SerializeField] private AudioClip winSound;
+    [SerializeField] private AudioClip loseSound;
     [Header("Pieces")]
-    [SerializeField] AudioClip moveAsideSound;
-    [SerializeField] AudioClip rotateSound;
-    [SerializeField] AudioClip deleteLineSound;
-    [SerializeField] AudioClip fireSound;
+    [SerializeField] private AudioClip moveAsideSound;
+    [SerializeField] private AudioClip rotateSound;
+    [SerializeField] private AudioClip deleteLineSound;
+    [SerializeField] private AudioClip fireSound;
     [SerializeField] private AudioClip lockSound;
-    [SerializeField] private SaveGameManager _saveGameManager;
+    [SerializeField] private SaveGameManager saveGameManager;
+    
     public AudioSource soundsAudioSourse;
-    public bool SoundsOn;
-    public float SoundsVolume;
+    public bool soundsOn;
+    public float soundsVolume;
     void Awake()
     {
         soundsAudioSourse = GetComponent<AudioSource>();
@@ -24,26 +25,20 @@ public class SoundManager : MonoBehaviour
         {
             Debug.LogError("SoundManager:: AudioSource is null");
         }
-        
     }
-
-    private void Start()
-    {
-        //_saveGameManager.LoadAudioData();
-    }
+    
 
     public void ChangeButtonState(bool buttonState)
     {
-        SoundsOn = buttonState;
-        _saveGameManager.SaveAudioSettings();
+        soundsOn = buttonState;
+        saveGameManager.SaveAudioSettings();
     }
     
     public void SetVolume(float volume)
     {
         soundsAudioSourse.volume = volume;
-        SoundsVolume = volume;
-        _saveGameManager.SaveAudioSettings();
-
+        soundsVolume = volume;
+        saveGameManager.SaveAudioSettings();
     }
     public void PlaySound(Sounds sound)
     {

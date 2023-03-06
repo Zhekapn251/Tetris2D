@@ -11,11 +11,11 @@ public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener, IU
     [SerializeField] string _iOSGameId;
     [SerializeField] bool _testMode;
     private string _gameId;
-    private int numberOfMinutes = 60 * 5;
-    float timer = 0;
-    private bool istimeForAds;
-    bool isLoadedAds;
-    public bool ShowAds;
+    private int _numberOfMinutes = 60 * 5;
+    private float _timer = 0;
+    private bool _isTimeForAds;
+    private bool _isLoadedAds;
+    public bool showAds;
     
     void Awake()
     {
@@ -29,21 +29,19 @@ public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener, IU
 
     private void Update()
     {
-        timer += Time.deltaTime;
-        if ((int)timer>numberOfMinutes)
+        _timer += Time.deltaTime;
+        if ((int)_timer>_numberOfMinutes)
         {
-            istimeForAds = true;
-            timer = 0;
+            _isTimeForAds = true;
+            _timer = 0;
         }
-
-        
     }
 
     public void ShowAdsToUser()
     {
-        if (isLoadedAds && istimeForAds && ShowAds)
+        if (_isLoadedAds && _isTimeForAds && showAds)
         {
-            ShowAds = false;
+            showAds = false;
             Advertisement.Show("Interstitial_Android", this);
         }
     }
@@ -62,7 +60,6 @@ public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener, IU
     }
     public void OnInitializationComplete()
     {
-        //Debug.Log("Unity Ads initialization complete.");
         LoadInterstitialAd();
     }
     public void LoadInterstitialAd()
@@ -73,8 +70,7 @@ public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener, IU
     
     public void OnUnityAdsAdLoaded(string placementId)
     {
-        isLoadedAds = true;
-        //Debug.Log("Ads is loaded");
+        _isLoadedAds = true;
     }
 
     public void OnUnityAdsFailedToLoad(string placementId, UnityAdsLoadError error, string message)
@@ -93,7 +89,7 @@ public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener, IU
         Debug.Log("Start showing Ads, stop Game activity");
         Time.timeScale = 0;
         _soundManager.soundsAudioSourse.mute = true;
-        _musicManager.musicAudioSourse.mute = true;
+        _musicManager.musicAudioSource.mute = true;
     }
 
     public void OnUnityAdsShowClick(string placementId)
@@ -107,12 +103,11 @@ public class AdsInitializer : MonoBehaviour, IUnityAdsInitializationListener, IU
         Debug.Log(showCompletionState);
         Time.timeScale = 1;
         _soundManager.soundsAudioSourse.mute = false;
-        _musicManager.musicAudioSourse.mute = false;
-        isLoadedAds = false;
-        istimeForAds = false;
-        timer = 0;
+        _musicManager.musicAudioSource.mute = false;
+        _isLoadedAds = false;
+        _isTimeForAds = false;
+        _timer = 0;
         LoadInterstitialAd();
-        
     }
 
 

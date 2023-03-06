@@ -239,7 +239,7 @@ Transform:
   m_LocalScale: {x: 3.69, y: 3.8, z: 4}
   m_Children: []
   m_Father: {fileID: 800953613}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &29335015
 GameObject:
@@ -286,9 +286,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 288c8ba4683d48742b3b6b7c1daad202, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _soundManager: {fileID: 1762642610}
-  _musicManager: {fileID: 251660264}
-  _saveGameManager: {fileID: 1137843408}
+  soundManager: {fileID: 1762642610}
+  musicManager: {fileID: 251660264}
+  saveGameManager: {fileID: 1137843408}
 --- !u!1 &40886770
 GameObject:
   m_ObjectHideFlags: 0
@@ -896,7 +896,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  _images:
+  images:
   - {fileID: 807175278}
   - {fileID: 2048192536}
   - {fileID: 1061547438}
@@ -1068,7 +1068,7 @@ MonoBehaviour:
   _androidGameId: 5116645
   _iOSGameId: 5116644
   _testMode: 0
-  ShowAds: 0
+  showAds: 0
 --- !u!4 &149531753
 Transform:
   m_ObjectHideFlags: 0
@@ -1384,7 +1384,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &177518053
 GameObject:
@@ -1872,10 +1872,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4565d12d73caf554ab295ecf20f30992, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  musicAudioSourse: {fileID: 0}
-  MusicOn: 0
-  MusicVolume: 0
-  _saveGameManager: {fileID: 1137843408}
+  saveGameManager: {fileID: 1137843408}
+  musicAudioSource: {fileID: 0}
+  musicOn: 0
+  musicVolume: 0
 --- !u!1 &255737336
 GameObject:
   m_ObjectHideFlags: 0
@@ -1987,7 +1987,7 @@ Transform:
   - {fileID: 29335016}
   - {fileID: 624675194}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &319976425
 GameObject:
@@ -2290,12 +2290,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 365319988}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -566.3555, y: -1107.2001, z: 942.76746}
+  m_LocalPosition: {x: -2, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2070345166}
-  m_Father: {fileID: 800953613}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &378475644
 GameObject:
@@ -2354,7 +2354,7 @@ MonoBehaviour:
   increaseBtn: {fileID: 1010265166}
   decreaseBtn: {fileID: 60093558}
   exitMenu: {fileID: 1493011278}
-  _saveGameManager: {fileID: 1137843408}
+  saveGameManager: {fileID: 1137843408}
 --- !u!114 &378475647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2804,7 +2804,7 @@ Transform:
   - {fileID: 8943444474866049945}
   - {fileID: 1382747554909436899}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &477803066
 GameObject:
@@ -3119,8 +3119,8 @@ MonoBehaviour:
   orangeImageSoundsButton: {fileID: 319976426}
   soundsSlider: {fileID: 1101028224}
   musicSlider: {fileID: 83675423}
-  _soundManager: {fileID: 1762642610}
-  _musicManager: {fileID: 251660264}
+  soundManager: {fileID: 1762642610}
+  musicManager: {fileID: 251660264}
   soundsBtn: {fileID: 1895342426}
   musicBtn: {fileID: 460704632}
   exitBtn: {fileID: 1528393581}
@@ -3695,12 +3695,11 @@ Transform:
   m_LocalPosition: {x: 564.3555, y: 1107.2001, z: -942.76746}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 365319990}
   - {fileID: 1468007570}
   - {fileID: 12142455}
   - {fileID: 1298777130}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &807175276
 GameObject:
@@ -5399,6 +5398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9123cf4ad0dd81847aafd5c93e059284, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelManager: {fileID: 2026534123}
   board: {fileID: 1468007571}
   audioSettingsStorage:
     soundsVolume: 0.45
@@ -5418,7 +5418,6 @@ MonoBehaviour:
     levelGoal: 5
   soundManager: {fileID: 1762642610}
   musicManager: {fileID: 251660264}
-  levelManager: {fileID: 2026534123}
 --- !u!4 &1137843409
 Transform:
   m_ObjectHideFlags: 0
@@ -5829,7 +5828,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 83a0a4ae094ac2347b9858e6778fa332, type: 3}
   - {fileID: 8300000, guid: ffff4e08c5854a342896ff459f2f39d3, type: 3}
   - {fileID: 8300000, guid: 4639382d3d41e6045bf3acdfb38a39ca, type: 3}
-  _winGame: {fileID: 1382747554909436904}
+  winGame: {fileID: 0}
 --- !u!1 &1226578146
 GameObject:
   m_ObjectHideFlags: 0
@@ -6144,7 +6143,7 @@ Transform:
   m_LocalScale: {x: 1.2311388, y: 1.2769867, z: 1}
   m_Children: []
   m_Father: {fileID: 800953613}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1298777131
 SpriteRenderer:
@@ -7101,7 +7100,7 @@ Transform:
   m_Children:
   - {fileID: 862711356}
   m_Father: {fileID: 800953613}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1468007571
 MonoBehaviour:
@@ -8524,15 +8523,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   board: {fileID: 1468007571}
-  SaveGameManager: {fileID: 1137843408}
+  saveGameManager: {fileID: 1137843408}
   soundsBtn: {fileID: 1844838673}
   speedBtn: {fileID: 1543270019}
   saveBtn: {fileID: 1608653617}
   quitBtn: {fileID: 1029214401}
   exitBtn: {fileID: 245249397}
-  _soundSettings: {fileID: 550338791}
-  _speedSettings: {fileID: 378475646}
-  _exitDialog: {fileID: 477803068}
+  soundSettings: {fileID: 550338791}
+  speedSettings: {fileID: 378475646}
+  exitDialog: {fileID: 477803068}
 --- !u!1 &1745326810
 GameObject:
   m_ObjectHideFlags: 0
@@ -8730,7 +8729,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1762642609
 GameObject:
@@ -8769,10 +8768,10 @@ MonoBehaviour:
   deleteLineSound: {fileID: 8300000, guid: f9c252b8c26171a44a10bd8957c44894, type: 3}
   fireSound: {fileID: 8300000, guid: c922c34f559ead440a273a13a924cfc7, type: 3}
   lockSound: {fileID: 8300000, guid: a2b2ebdd716392440b3bf6467671ae7c, type: 3}
-  _saveGameManager: {fileID: 1137843408}
+  saveGameManager: {fileID: 1137843408}
   soundsAudioSourse: {fileID: 0}
-  SoundsOn: 0
-  SoundsVolume: 0
+  soundsOn: 0
+  soundsVolume: 0
 --- !u!82 &1762642611
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9203,7 +9202,7 @@ Transform:
   - {fileID: 645033799}
   - {fileID: 1357469824059028773}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1826554008
 GameObject:
@@ -9665,7 +9664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9106477a9175dac4b8b8564cd43b0114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _loseGame: {fileID: 8943444474866049950}
+  loseGame: {fileID: 8943444474866049950}
 --- !u!1 &1895342424
 GameObject:
   m_ObjectHideFlags: 0
@@ -9999,7 +9998,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2007725185
 GameObject:
@@ -10242,10 +10241,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   adsInitializer: {fileID: 149531752}
-  _soundManager: {fileID: 1762642610}
-  _saveGameManager: {fileID: 1137843408}
+  soundManager: {fileID: 1762642610}
+  saveGameManager: {fileID: 1137843408}
   progressBar: {fileID: 3920427323835227248}
-  _fireworks: {fileID: 1214244966}
+  fireworks: {fileID: 1214244966}
   levelGoal: 0
   lines: 0
   board: {fileID: 1468007571}
@@ -16014,7 +16013,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   board: {fileID: 1468007571}
   score: {fileID: 1382747555834554310}
-  _fireworks: {fileID: 1214244966}
+  fireworks: {fileID: 1214244966}
   filledStarsAmount: {fileID: 1382747556097556302}
 --- !u!114 &1382747555023040096
 MonoBehaviour:
@@ -37519,7 +37518,7 @@ Transform:
   - {fileID: 7914407111934939203}
   - {fileID: 7914407112461920480}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &7914407112052635660
 Transform:
@@ -43354,9 +43353,9 @@ MonoBehaviour:
   score: {fileID: 40886772}
   menuBtn: {fileID: 1382747555069389579}
   resetBtn: {fileID: 1418257554318649735}
-  _saveGameManager: {fileID: 1137843408}
-  _gameOverFade: {fileID: 1887218071}
-  _menu: {fileID: 1732191428}
+  saveGameManager: {fileID: 1137843408}
+  gameOverFade: {fileID: 1887218071}
+  menu: {fileID: 1732191428}
 --- !u!114 &8943444475761629352
 MonoBehaviour:
   m_ObjectHideFlags: 0

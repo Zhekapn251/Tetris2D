@@ -1,15 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameOverFade : MonoBehaviour
 {
-    private Image _image;
-    [SerializeField] private LoseGame _loseGame;
+    [SerializeField] private LoseGame loseGame;
 
+    private Image _image;
+    
     private void Start()
     {
         _image = GetComponentInChildren<Image>();
@@ -27,7 +25,7 @@ public class GameOverFade : MonoBehaviour
     }
     private void ShowLooseMenu()
     {
-        _loseGame.ShowLoseGame();
+        loseGame.ShowLoseGame();
     }
 
     public void LooseUnFade()

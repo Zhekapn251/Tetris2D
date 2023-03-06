@@ -5,21 +5,14 @@ using UnityEngine.UI;
 
 public class SoundSettings : MonoBehaviour
 {
-    // Start is called before the first frame update
-    
-    
-    private bool musicIsEnabled;
-    private float musicVolume;
-    private bool soundsIsEnabled;
-    private float soundsVolume;
     [SerializeField] private Image grayImageMusicButton;
     [SerializeField] private Image orangeImageMusicButton;
     [SerializeField] private Image grayImageSoundsButton;
     [SerializeField] private Image orangeImageSoundsButton;
     [SerializeField] public Slider soundsSlider;
     [SerializeField] public Slider musicSlider;
-    [SerializeField] private SoundManager _soundManager;
-    [SerializeField] private MusicManager _musicManager;
+    [SerializeField] private SoundManager soundManager;
+    [SerializeField] private MusicManager musicManager;
     [SerializeField] private Button soundsBtn;
     [SerializeField] private Button musicBtn;
     [SerializeField] private Button exitBtn;
@@ -27,6 +20,11 @@ public class SoundSettings : MonoBehaviour
     [SerializeField] private Transform musicBtnPositionOff;
     [SerializeField] private Transform soundBtnPositionOn;
     [SerializeField] private Transform soundBtnPositionOff;
+    
+    private bool _musicIsEnabled;
+    private float _musicVolume;
+    private bool _soundsIsEnabled;
+    private float _soundsVolume;
     private void Start()
     {
         soundsBtn.onClick.AddListener(SoundsButtonCliked);
@@ -48,74 +46,72 @@ public class SoundSettings : MonoBehaviour
     }
     private void AudioInit()
     {
-        soundsIsEnabled = _soundManager.SoundsOn;
-        musicIsEnabled = _musicManager.MusicOn;
-        musicSlider.value = _musicManager.MusicVolume;
-        soundsSlider.value = _soundManager.SoundsVolume;
+        _soundsIsEnabled = soundManager.soundsOn;
+        _musicIsEnabled = musicManager.musicOn;
+        musicSlider.value = musicManager.musicVolume;
+        soundsSlider.value = soundManager.soundsVolume;
         AudioUIInit();
     }
     private void AudioUIInit()
     {
-        if (!musicIsEnabled) OffAnimation(grayImageMusicButton, orangeImageMusicButton, musicBtnPositionOff, 0f);
-        if (!soundsIsEnabled) OffAnimation(grayImageSoundsButton, orangeImageSoundsButton, soundBtnPositionOff,0f);
+        if (!_musicIsEnabled) OffAnimation(grayImageMusicButton, orangeImageMusicButton, musicBtnPositionOff, 0f);
+        if (!_soundsIsEnabled) OffAnimation(grayImageSoundsButton, orangeImageSoundsButton, soundBtnPositionOff,0f);
     }
     private void OnAnimation(Image bottom, Image top, Transform targetPosition)
     {
         bottom.transform.DOMoveX(targetPosition.position.x, 0.3f);
-        Debug.Log(bottom.transform.localPosition.x);
         top.DOFade(1, 0.3f);
     }
     
     private void OffAnimation(Image bottom, Image top, Transform targetPosition, float fadeSpeed = 0.3f)
     {
         bottom.transform.DOMoveX(targetPosition.position.x, fadeSpeed);
-        Debug.Log(bottom.transform.localPosition.x);
         top.DOFade(0, 0.3f);
     }
 
     private void MusicSlider(float sliderValue)
     {
-        musicVolume = sliderValue;
-        _musicManager.SetVolume(musicVolume);
+        _musicVolume = sliderValue;
+        musicManager.SetVolume(_musicVolume);
     }
 
     private void SoundsSlider(float sliderValue)
     {
-        soundsVolume = sliderValue;
-        _soundManager.SetVolume(soundsVolume);
+        _soundsVolume = sliderValue;
+        soundManager.SetVolume(_soundsVolume);
     }
     
     public void MusicButtonCliked()
     {
-        if (musicIsEnabled)
+        if (_musicIsEnabled)
         {
             OffAnimation(grayImageMusicButton,orangeImageMusicButton, musicBtnPositionOff);
-            musicIsEnabled = false;
-            _musicManager.musicAudioSourse.mute = true;
+            _musicIsEnabled = false;
+            musicManager.musicAudioSource.mute = true;
         }
         else
         {
             OnAnimation(grayImageMusicButton,orangeImageMusicButton, musicBtnPositionOn);
-            musicIsEnabled = true;
-            _musicManager.musicAudioSourse.mute = false;
+            _musicIsEnabled = true;
+            musicManager.musicAudioSource.mute = false;
         }
-        _musicManager.ChangeButtonState(musicIsEnabled);
+        musicManager.ChangeButtonState(_musicIsEnabled);
     }
     
     public void SoundsButtonCliked()  
     {
-        if (soundsIsEnabled)
+        if (_soundsIsEnabled)
         {
             OffAnimation(grayImageSoundsButton,orangeImageSoundsButton, soundBtnPositionOff);
-            soundsIsEnabled = false;
-            _soundManager.soundsAudioSourse.mute = true;
+            _soundsIsEnabled = false;
+            soundManager.soundsAudioSourse.mute = true;
         }
         else
         {
             OnAnimation(grayImageSoundsButton,orangeImageSoundsButton, soundBtnPositionOn);
-            soundsIsEnabled = true;
-            _soundManager.soundsAudioSourse.mute = false;
+            _soundsIsEnabled = true;
+            soundManager.soundsAudioSourse.mute = false;
         }
-        _soundManager.ChangeButtonState(soundsIsEnabled);
+        soundManager.ChangeButtonState(_soundsIsEnabled);
     }
 }

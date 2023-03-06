@@ -6,12 +6,11 @@ public class FireEffect : MonoBehaviour
 {
     [SerializeField] private List<ParticleSystem> effects;
     
+    private FireEffectPool _fireEffectPool;
 
-    private FireEffectPool FireEffectPool;
-
-    public void Init(FireEffectPool FireEffectPool)
+    public void Init(FireEffectPool fireEffectPool)
     {
-        this.FireEffectPool = FireEffectPool;
+        this._fireEffectPool = fireEffectPool;
     }
     public void EnableEffects()
     {
@@ -24,6 +23,6 @@ public class FireEffect : MonoBehaviour
 
     private void ReturnToPool()
     {
-        FireEffectPool.ReturnFireEffect(this);
+        _fireEffectPool.ReturnFireEffect(this);
     }
 }

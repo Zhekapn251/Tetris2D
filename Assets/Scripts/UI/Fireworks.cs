@@ -6,12 +6,12 @@ using Random = System.Random;
 
 public class Fireworks : MonoBehaviour
 {
+    [SerializeField] private AudioClip[] sounds;
+    [SerializeField] private WinGame winGame;
+    
     private ParticleSystem _particleSystem;
     private AudioSource _audioSource;
-    private int _nubberOfParticles;
-
-    [SerializeField] private AudioClip[] sounds;
-    [SerializeField] private WinGame _winGame;
+    private int _numberOfParticles;
 
     private void Start()
     {
@@ -23,14 +23,13 @@ public class Fireworks : MonoBehaviour
 
     private void Update()
     {
-        var amount = Math.Abs(_nubberOfParticles - _particleSystem.particleCount);
-        if (_particleSystem.particleCount > _nubberOfParticles) 
+        var amount = Math.Abs(_numberOfParticles - _particleSystem.particleCount);
+        if (_particleSystem.particleCount > _numberOfParticles) 
         { 
             StartCoroutine(PlaySound(sounds[UnityEngine.Random.Range(0, sounds.Length)], amount));
-            
         }
 
-        _nubberOfParticles = _particleSystem.particleCount;
+        _numberOfParticles = _particleSystem.particleCount;
     }
 
     public void FireworksEnable()
@@ -45,8 +44,7 @@ public class Fireworks : MonoBehaviour
 
     void OnParticleSystemStopped()
     {
-        _winGame.ShowWinGame();
-        //Debug.Log("System has stopped!");
+        winGame.ShowWinGame();
     }
     private IEnumerator PlaySound(AudioClip clip, int amount)
     {
@@ -56,10 +54,8 @@ public class Fireworks : MonoBehaviour
             var sound = clip;
             StartCoroutine(PlaySound(sound, soundDelay));
             
-            //Attempt to avoid multiple of the same audio being played at the exact same time - as it sounds wierd
             yield return new WaitForSeconds(0.05f);
         }
-
     }
     private IEnumerator PlaySound(AudioClip sound, float delayInSeconds)
     {
@@ -67,5 +63,4 @@ public class Fireworks : MonoBehaviour
         _audioSource.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
         _audioSource.PlayOneShot(sound);
     }
-    
 }

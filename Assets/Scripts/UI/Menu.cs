@@ -7,20 +7,20 @@ using UnityEngine.UI;
 public class Menu : MonoBehaviour
 {
     [SerializeField] Board board;
-    [SerializeField] SaveGameManager SaveGameManager;
+    [SerializeField] SaveGameManager saveGameManager;
     [SerializeField] private Button soundsBtn;
     [SerializeField] private Button speedBtn;
     [SerializeField] private Button saveBtn;
     [SerializeField] private Button quitBtn;
     [SerializeField] private Button exitBtn;
-    [SerializeField] private SoundSettings _soundSettings;
-    [SerializeField] private SpeedSettings _speedSettings;
-    [SerializeField] private ExitDialog _exitDialog;
+    [SerializeField] private SoundSettings soundSettings;
+    [SerializeField] private SpeedSettings speedSettings;
+    [SerializeField] private ExitDialog exitDialog;
     
     private void Start()
     {
-        soundsBtn.onClick.AddListener(_soundSettings.SoundsMenuOn);
-        speedBtn.onClick.AddListener(_speedSettings.SpeedMenuOn);
+        soundsBtn.onClick.AddListener(soundSettings.SoundsMenuOn);
+        speedBtn.onClick.AddListener(speedSettings.SpeedMenuOn);
         saveBtn.onClick.AddListener(SaveButtonClicked);
         quitBtn.onClick.AddListener(ConfirmExit);
         exitBtn.onClick.AddListener(ExitMenu);
@@ -36,12 +36,12 @@ public class Menu : MonoBehaviour
     }
     private void SaveButtonClicked()
     {
-        SaveGameManager.SaveGame();
+        saveGameManager.SaveGame();
     }
 
     private void ConfirmExit()
     {
-        _exitDialog.gameObject.SetActive(true);
+        exitDialog.gameObject.SetActive(true);
     }
 
     private void ExitMenu()
@@ -49,9 +49,8 @@ public class Menu : MonoBehaviour
         if (gameObject.activeInHierarchy)
         {
             gameObject.SetActive(false);
-            _exitDialog.CancelExit();
+            exitDialog.CancelExit();
             board.AllowStepping(true);
-            //Time.timeScale = 1;
         }
     }
 }

@@ -11,18 +11,19 @@ public class SpeedSettings : MonoBehaviour
     [SerializeField] private Button increaseBtn;
     [SerializeField] private Button decreaseBtn;
     [SerializeField] private Button exitMenu;
-    [SerializeField] private SaveGameManager _saveGameManager;
-    private List<float> steplist = new List<float>() { 0f, 0.32f, 0.64f, 1f };
-    private List<float> stepSpeed = new List<float>() { 2f, 1f, 0.5f, 0.25f };
+    [SerializeField] private SaveGameManager saveGameManager;
+    
+    private List<float> _steplist = new List<float>() { 0f, 0.32f, 0.64f, 1f };
+    private List<float> _stepSpeed = new List<float>() { 2f, 1f, 0.5f, 0.25f };
     private int _step;
-    private float speed;
+    private float _speed;
 
     private void Start()
     {
      increaseBtn.onClick.AddListener(IncreaseFillBar);
      decreaseBtn.onClick.AddListener(DecreaseFillBar);
      exitMenu.onClick.AddListener(SpeedMenuOff);
-     speed = _saveGameManager.playerSettingsStorage.speed;
+     _speed = saveGameManager.playerSettingsStorage.speed;
      SetSpeedBar();
     }
 
@@ -38,22 +39,22 @@ public class SpeedSettings : MonoBehaviour
 
     private void SetSpeedBar()
     {
-     if (Math.Abs(speed - 0.25f) < 0.1f)
+     if (Math.Abs(_speed - 0.25f) < 0.1f)
      {
       speedBar.fillAmount = 1;
       _step = 3;
      }  
-     else if (Math.Abs(speed - 0.5f) < 0.1f )
+     else if (Math.Abs(_speed - 0.5f) < 0.1f )
      {
       speedBar.fillAmount = 0.641f;
       _step = 2;
      }
-     else if (Math.Abs(speed - 1f) < 0.1f)
+     else if (Math.Abs(_speed - 1f) < 0.1f)
      {
       speedBar.fillAmount = 0.321f;
       _step = 1;
      }
-     else if (Math.Abs(speed - 2f) < 0.1f)
+     else if (Math.Abs(_speed - 2f) < 0.1f)
      {
       speedBar.fillAmount = 0;
       _step = 0;
@@ -63,22 +64,22 @@ public class SpeedSettings : MonoBehaviour
       _step = 0;
      }
     }
-    public void SpeedSettingsInit(float _speed)
+    public void SpeedSettingsInit(float speed)
     {
      
-     if (Math.Abs(_speed - 2f) < 0.1f)
+     if (Math.Abs(speed - 2f) < 0.1f)
      {
       _step = 0;
      }  
-     else if (Math.Abs(_speed - 1f) < 0.1f)
+     else if (Math.Abs(speed - 1f) < 0.1f)
      {
       _step = 1;
      }
-     else if (Math.Abs(_speed - 0.5f) < 0.1f)
+     else if (Math.Abs(speed - 0.5f) < 0.1f)
      {
       _step = 2;
      }
-     else if (Math.Abs(_speed - 0.25f) < 0.1f)
+     else if (Math.Abs(speed - 0.25f) < 0.1f)
      {
       _step = 3;
      }
@@ -92,11 +93,11 @@ public class SpeedSettings : MonoBehaviour
     
     private void ChangeSpeed(int step)
     {
-     board.stepSpeed = stepSpeed[step];
+     board.stepSpeed = _stepSpeed[step];
     }
     private void IncreaseFillBar()
     {
-     if(_step<steplist.Count-1) _step++;
+     if(_step<_steplist.Count-1) _step++;
      ChangeSpeedBar(_step);
      ChangeSpeed(_step);
      SaveUpdatedSpeed();
@@ -112,12 +113,12 @@ public class SpeedSettings : MonoBehaviour
 
     private void SaveUpdatedSpeed()
     {
-     _saveGameManager.SavePlayersSettings(false);
+     saveGameManager.SavePlayersSettings(false);
     }
  
     private void ChangeSpeedBar(int step)
     { 
-     speedBar.fillAmount = steplist[step];
+     speedBar.fillAmount = _steplist[step];
     }
 
 }

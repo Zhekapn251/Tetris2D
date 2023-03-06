@@ -6,17 +6,20 @@ using UnityEngine.Tilemaps;
 
 public class SaveGameManager : MonoBehaviour
 {
+    [SerializeField] private LevelManager levelManager;
+    
+    private string _mySettingsKey = "mysettings";
+    private string _playerSettingsKey = "playersettings";
+    private string _audioSettingsKey = "audioSettings";
+    
     public Board board;
     public AudioSettingsStorage audioSettingsStorage;
     public TilesDataStorage tilesDataStorage;
     public PlayerSettingsStorage playerSettingsStorage;
     public SoundManager soundManager;
     public MusicManager musicManager;
-    [SerializeField] private LevelManager levelManager;
-    private string mySettingsKey = "mysettings";
-    private string playerSettingsKey = "playersettings";
-    private string audioSettingsKey = "audioSettings";
     public  bool isSaved { get; set; }
+    
     private void Start()
     {
         SetOrthoSize((float)Screen.height / Screen.width);
@@ -56,7 +59,7 @@ public class SaveGameManager : MonoBehaviour
         tilesDataStorage.nextPieceRotation = board.nextPieceStartRotation;
         
         string json = JsonUtility.ToJson(tilesDataStorage);
-        PlayerPrefs.SetString(mySettingsKey, json);
+        PlayerPrefs.SetString(_mySettingsKey, json);
         PlayerPrefs.Save();
     }
     public void SavePlayersSettings(bool saveGame)
@@ -68,19 +71,19 @@ public class SaveGameManager : MonoBehaviour
         playerSettingsStorage.lines = levelManager.lines;
         playerSettingsStorage.levelGoal = levelManager.levelGoal;
         string json = JsonUtility.ToJson(playerSettingsStorage);
-        PlayerPrefs.SetString(playerSettingsKey, json);
+        PlayerPrefs.SetString(_playerSettingsKey, json);
         PlayerPrefs.Save();
     }
 
     public void SaveAudioSettings()
     {
-        audioSettingsStorage.soundsOn = soundManager.SoundsOn;
-        audioSettingsStorage.soundsVolume = soundManager.SoundsVolume;
-        audioSettingsStorage.musicOn = musicManager.MusicOn;
-        audioSettingsStorage.musicVolume = musicManager.MusicVolume;
+        audioSettingsStorage.soundsOn = soundManager.soundsOn;
+        audioSettingsStorage.soundsVolume = soundManager.soundsVolume;
+        audioSettingsStorage.musicOn = musicManager.musicOn;
+        audioSettingsStorage.musicVolume = musicManager.musicVolume;
         
         string json = JsonUtility.ToJson(audioSettingsStorage);
-        PlayerPrefs.SetString(audioSettingsKey, json);
+        PlayerPrefs.SetString(_audioSettingsKey, json);
         PlayerPrefs.Save();
         
     }
@@ -88,14 +91,14 @@ public class SaveGameManager : MonoBehaviour
     {
         SettingLoader();
         board.listOfAllTilesToSave = tilesDataStorage.list;
-        board.ActivePieceInitialRotation = tilesDataStorage.activePieceRotation; //activePiece.rotationIndex
+        board.ActivePieceInitialRotation = tilesDataStorage.activePieceRotation;
         board.nextPieceStartRotation = tilesDataStorage.nextPieceRotation;
     }
     private bool SettingLoader()
     {
-        if (PlayerPrefs.HasKey(mySettingsKey))
+        if (PlayerPrefs.HasKey(_mySettingsKey))
         {
-            string json = PlayerPrefs.GetString(mySettingsKey);
+            string json = PlayerPrefs.GetString(_mySettingsKey);
             tilesDataStorage = JsonUtility.FromJson<TilesDataStorage>(json);
             return true;
         }
@@ -115,9 +118,9 @@ public class SaveGameManager : MonoBehaviour
     }
     private bool PlayerSettingLoader()
     {
-        if (PlayerPrefs.HasKey(playerSettingsKey))
+        if (PlayerPrefs.HasKey(_playerSettingsKey))
         {
-            string json = PlayerPrefs.GetString(playerSettingsKey);
+            string json = PlayerPrefs.GetString(_playerSettingsKey);
             playerSettingsStorage = JsonUtility.FromJson<PlayerSettingsStorage>(json);
             return true;
         }
@@ -129,17 +132,17 @@ public class SaveGameManager : MonoBehaviour
     public void LoadAudioData()
     {
         AudioSettingLoader();
-        soundManager.SoundsOn = audioSettingsStorage.soundsOn;
-        soundManager.SoundsVolume = audioSettingsStorage.soundsVolume;
-        musicManager.MusicOn = audioSettingsStorage.musicOn;
-        musicManager.MusicVolume = audioSettingsStorage.musicVolume;
+        soundManager.soundsOn = audioSettingsStorage.soundsOn;
+        soundManager.soundsVolume = audioSettingsStorage.soundsVolume;
+        musicManager.musicOn = audioSettingsStorage.musicOn;
+        musicManager.musicVolume = audioSettingsStorage.musicVolume;
     }
     
     private bool AudioSettingLoader()
     {
-        if (PlayerPrefs.HasKey(audioSettingsKey))
+        if (PlayerPrefs.HasKey(_audioSettingsKey))
         {
-            string json = PlayerPrefs.GetString(audioSettingsKey);
+            string json = PlayerPrefs.GetString(_audioSettingsKey);
             audioSettingsStorage = JsonUtility.FromJson<AudioSettingsStorage>(json);
             return true;
         }

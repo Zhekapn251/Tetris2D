@@ -8,24 +8,19 @@ using UnityEngine.UI;
 public class FeedbackArrowsDriver : MonoBehaviour
 {
     [SerializeField] private float speed;
-    [SerializeField] private Image[] _images = new Image[4];
+    [SerializeField] private Image[] images = new Image[4];
     
     
     IEnumerator Disappear(Image image)
     {
-
-        
         float alpha = 0.8f;
         while (alpha >= 0)
         {
-            // Color color = spriteRenderer.color;
             alpha -= Time.deltaTime * speed;
             image.color = new Color(1, 1, 1, alpha);
-            //color.a = alpha;
             yield return null;
         }
         image.color = Color.clear;
-        
     }
     
     IEnumerator Appear(Image image)
@@ -49,22 +44,18 @@ public class FeedbackArrowsDriver : MonoBehaviour
         switch (arrow)
         {
             case Arrow.down:
-                objArrow = _images[(int)Arrow.down];
+                objArrow = images[(int)Arrow.down];
                 break;
             case Arrow.left:
-                objArrow = _images[(int)Arrow.left];
+                objArrow = images[(int)Arrow.left];
                 break;
             case Arrow.right:
-                objArrow = _images[(int)Arrow.right];
+                objArrow = images[(int)Arrow.right];
                 break;
             case Arrow.rotate:
-                objArrow = _images[(int)Arrow.rotate];
+                objArrow = images[(int)Arrow.rotate];
                 break;
         }
         StartCoroutine(Appear(objArrow));
     }
-      
-    
-    
-
 }

@@ -7,7 +7,9 @@ public class BackgroundAnimation : MonoBehaviour
    [SerializeField] private SpriteRenderer planet1;
    [SerializeField] private SpriteRenderer planet2;
    [SerializeField] private SpriteRenderer sun;
-   private bool isAnimating = true;
+
+   private bool _isAnimating = true;
+   
    public float rocks2Speed = 0.2f;
    public float planet2Speed = 0.5f;
    public float planet1Speed = 0.2f;
@@ -19,7 +21,7 @@ public class BackgroundAnimation : MonoBehaviour
 
    private IEnumerator Animation()
    {
-      while (isAnimating)
+      while (_isAnimating)
       {
          yield return null;
          Animate();

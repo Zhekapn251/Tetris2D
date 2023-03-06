@@ -6,7 +6,6 @@ public enum Sounds
     Rotate,
     MoveDown,
     Fire,
-    Drop,    
     Lock,
     DeleteLine,
 }

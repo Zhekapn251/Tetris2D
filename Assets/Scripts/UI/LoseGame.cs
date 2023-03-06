@@ -12,9 +12,10 @@ public class LoseGame : MonoBehaviour
     [SerializeField] private TMP_Text score;
     [SerializeField] private Button menuBtn;
     [SerializeField] private Button resetBtn;
-    [SerializeField]private SaveGameManager _saveGameManager;
-    [SerializeField] private GameOverFade _gameOverFade;
-    [SerializeField] private Menu _menu;
+    [SerializeField]private SaveGameManager saveGameManager;
+    [SerializeField] private GameOverFade gameOverFade;
+    [SerializeField] private Menu menu;
+    
     private void Start()
     {
         menuBtn.onClick.AddListener(OpenMainMenu);
@@ -23,7 +24,7 @@ public class LoseGame : MonoBehaviour
 
     private void OpenMainMenu()
     {
-        _menu.OpenMainMenu();
+        menu.OpenMainMenu();
         HideLoseGame();
     }
 
@@ -34,18 +35,17 @@ public class LoseGame : MonoBehaviour
     }
     public void ShowLoseGame()
     {
-        //board.allowStepping = false;
         gameObject.SetActive(true);
         score.text = board.score.ToString();
-        _saveGameManager.ResetData();
+        saveGameManager.ResetData();
     }
-    
-    public void HideLoseGame()
+
+    private void HideLoseGame()
     {
         gameObject.SetActive(false);
         board.StartGameRoutinesWithoutSaving();
         board.AllowStepping(true);
-        _gameOverFade.LooseUnFade();
+        gameOverFade.LooseUnFade();
     }
 
 }
