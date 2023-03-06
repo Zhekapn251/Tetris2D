@@ -1067,7 +1067,7 @@ MonoBehaviour:
   _musicManager: {fileID: 251660264}
   _androidGameId: 5116645
   _iOSGameId: 5116644
-  _testMode: 1
+  _testMode: 0
   ShowAds: 0
 --- !u!4 &149531753
 Transform:
